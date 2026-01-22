@@ -7,7 +7,7 @@
 
 <head>
     <title>
-        Danh sách Collaborators
+        Sửa Family YouTube
     </title>
     <meta charset="utf-8" />
     <meta content="follow, index" name="robots" />
@@ -41,7 +41,6 @@
     <!-- Google tag (gtag.js) -->
     <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-52YZ3XGZJ6">
     </script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
 
@@ -52,14 +51,7 @@
 
         gtag('config', 'G-52YZ3XGZJ6');
     </script>
-
 </head>
-
-<style>
-    #member_detail_modal {
-        z-index: 9990;
-    }
-</style>
 
 <body class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-sidebar-fixed kt-header-fixed">
     <!-- Theme Mode -->
@@ -106,10 +98,11 @@
                 </a>
                 <a class="hidden dark:block" href="index.html">
                     <img class="default-logo min-h-[22px] max-w-none"
-                        src="uploads/Logo.png" style="width: 220px" alt="Muakey" />
+                        src="" alt="Muakey" />
                     <img class="small-logo min-h-[18px] max-w-none" style="width : 29px"
                         src="https://muakey.com/favicon.ico" />
                 </a>
+
             </div>
             <div class="kt-sidebar-content flex grow shrink-0 py-5 pe-2" id="sidebar_content">
                 <div class="kt-scrollable-y-hover grow shrink-0 flex ps-2 lg:ps-5 pe-1 lg:pe-3"
@@ -119,7 +112,7 @@
                     <!-- Sidebar Menu -->
                     <div class="kt-menu flex flex-col grow gap-1" data-kt-menu="true"
                         data-kt-menu-accordion-expand-all="false" id="sidebar_menu">
-                        <div class="kt-menu-item here" data-kt-menu-item-toggle="accordion"
+                        <div class="kt-menu-item here show" data-kt-menu-item-toggle="accordion"
                             data-kt-menu-item-trigger="click">
                             <div class="kt-menu-link flex items-center grow cursor-pointer border border-transparent gap-[10px] ps-[10px] pe-[10px] py-[6px]"
                                 tabindex="0">
@@ -162,7 +155,7 @@
                                         </span>
                                     </a>
                                 </div>
-                                <div class="kt-menu-item">
+                                <div class="kt-menu-item active">
                                     <a class="kt-menu-link border border-transparent items-center grow kt-menu-item-active:bg-accent/60 dark:menu-item-active:border-border kt-menu-item-active:rounded-lg hover:bg-accent/60 hover:rounded-lg gap-[14px] ps-[10px] pe-[10px] py-[8px]"
                                         href="?act=add-family"
                                         tabindex="0">
@@ -178,7 +171,7 @@
                             </div>
                         </div>
 
-                        <div class="kt-menu-item here show" data-kt-menu-item-toggle="accordion"
+                        <div class="kt-menu-item" data-kt-menu-item-toggle="accordion"
                             data-kt-menu-item-trigger="click">
                             <div class="kt-menu-link flex items-center grow cursor-pointer border border-transparent gap-[10px] ps-[10px] pe-[10px] py-[6px]"
                                 tabindex="0">
@@ -207,7 +200,8 @@
                                     </span>
                                 </span>
                             </div>
-                            <div class="kt-menu-accordion gap-1 ps-[10px] relative before:absolute before:start-[20px] before:top-0 before:bottom-0 before:border-s before:border-border">
+                            <div
+                                class="kt-menu-accordion gap-1 ps-[10px] relative before:absolute before:start-[20px] before:top-0 before:bottom-0 before:border-s before:border-border">
                                 <div class="kt-menu-item">
                                     <a class="kt-menu-link border border-transparent items-center grow kt-menu-item-active:bg-accent/60 dark:menu-item-active:border-border kt-menu-item-active:rounded-lg hover:bg-accent/60 hover:rounded-lg gap-[14px] ps-[10px] pe-[10px] py-[8px]"
                                         href="?act=collaborators"
@@ -221,7 +215,7 @@
                                         </span>
                                     </a>
                                 </div>
-                                <div class="kt-menu-item active">
+                                <div class="kt-menu-item">
                                     <a class="kt-menu-link border border-transparent items-center grow kt-menu-item-active:bg-accent/60 dark:menu-item-active:border-border kt-menu-item-active:rounded-lg hover:bg-accent/60 hover:rounded-lg gap-[14px] ps-[10px] pe-[10px] py-[8px]"
                                         href="?act=collaborators&sub=add"
                                         tabindex="0">
@@ -249,125 +243,360 @@
             <!-- Content -->
             <main class="grow pt-5" id="content" role="content">
                 <!-- Container -->
+                <div class="kt-container-fixed" id="contentContainer">
+                </div>
+                <!-- End of Container -->
 
-                <div class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-sidebar-fixed kt-header-fixed">
-                    <!-- Include sidebar from index.php - I'll use a simplified version -->
-                    <!-- For now, creating a minimal working version -->
-                    <div class="kt-container-fixed">
-                        <div class="grid gap-5 lg:gap-7.5">
-                            <div class="grid">
-                                <div class="kt-card kt-card-grid h-full min-w-full">
-                                    <div class="kt-card-header">
-                                        <h3 class="kt-card-title">Thêm Collaborator Mới</h3>
-                                    </div>
-                                    <div class="kt-card-body">
-                                        <?php if (isset($_SESSION['errors']) && !empty($_SESSION['errors'])): ?>
-                                            <div class="mb-5 p-4 bg-destructive/10 border border-destructive rounded-lg">
-                                                <div class="flex items-start gap-2">
-                                                    <i class="ki-filled ki-information text-destructive text-lg mt-0.5"></i>
-                                                    <div class="flex flex-col gap-1">
-                                                        <h4 class="text-sm font-semibold text-destructive">Có lỗi xảy ra:</h4>
-                                                        <ul class="list-disc list-inside text-sm text-destructive space-y-1">
-                                                            <?php foreach ($_SESSION['errors'] as $error): ?>
-                                                                <li><?php echo htmlspecialchars($error); ?></li>
-                                                            <?php endforeach; ?>
-                                                        </ul>
-                                                    </div>
+                <!-- Container -->
+                <div class="kt-container-fixed">
+                    <div class="grid gap-5 lg:gap-7.5">
+                        <!-- begin: form card -->
+                        <div class="grid">
+                            <div class="kt-card kt-card-grid h-full min-w-full">
+                                <div class="kt-card-header">
+                                    <h3 class="kt-card-title">
+                                        Sửa Family
+                                    </h3>
+                                </div>
+                                <div class="kt-card-body">
+                                    <?php if (isset($_SESSION['errors']) && !empty($_SESSION['errors'])): ?>
+                                        <div class="mb-5 p-4 bg-destructive/10 border border-destructive rounded-lg">
+                                            <div class="flex items-start gap-2">
+                                                <i class="ki-filled ki-information text-destructive text-lg mt-0.5"></i>
+                                                <div class="flex flex-col gap-1">
+                                                    <h4 class="text-sm font-semibold text-destructive">Có lỗi xảy ra:</h4>
+                                                    <ul class="list-disc list-inside text-sm text-destructive space-y-1">
+                                                        <?php foreach ($_SESSION['errors'] as $error): ?>
+                                                            <li><?php echo htmlspecialchars($error); ?></li>
+                                                        <?php endforeach; ?>
+                                                    </ul>
                                                 </div>
                                             </div>
-                                            <?php unset($_SESSION['errors']); ?>
-                                        <?php endif; ?>
+                                        </div>
+                                        <?php unset($_SESSION['errors']); ?>
+                                    <?php endif; ?>
 
-                                        <form method="POST" action="/" id="add_collaborator_form" class="grid gap-5 lg:gap-7.5">
-                                            <input type="hidden" name="action" value="add-collaborator">
-
-                                            <div class="flex flex-col gap-2" style="padding: 10px;">
-                                                <label class="kt-form-label text-mono font-semibold text-sm">
-                                                    Nội dung <span class="text-destructive">*</span>
-                                                </label>
-                                                <textarea name="content" id="content_editor" style="visibility: hidden; position: absolute;"></textarea>
+                                    <?php if (isset($_SESSION['success'])): ?>
+                                        <div class="mb-5 p-4 bg-success/10 border border-success rounded-lg">
+                                            <div class="flex items-center gap-2">
+                                                <i class="ki-filled ki-check-circle text-success text-lg"></i>
+                                                <span class="text-sm font-semibold text-success"><?php echo htmlspecialchars($_SESSION['success']); ?></span>
                                             </div>
+                                        </div>
+                                        <?php unset($_SESSION['success']); ?>
+                                    <?php endif; ?>
 
-                                            <div class="flex flex-col gap-2" style="padding: 0 10px;">
+                                    <?php
+                                    // Helper function to format member data for display
+                                    function formatMemberForDisplay($memberData)
+                                    {
+                                        if (empty($memberData)) {
+                                            return '';
+                                        }
+
+                                        // Try to decode as JSON first
+                                        $decoded = json_decode($memberData, true);
+                                        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                                            // Convert JSON back to text format
+                                            $lines = [];
+                                            $keyMap = [
+                                                'order_code' => 'Mã đơn hàng',
+                                                'product_name' => 'Tên sản phẩm',
+                                                'email' => 'Email',
+                                                'region' => 'Khu vực bạn sống',
+                                                'purchase_date' => 'Ngày mua'
+                                            ];
+
+                                            foreach ($decoded as $key => $value) {
+                                                $vietnameseKey = isset($keyMap[$key]) ? $keyMap[$key] : $key;
+                                                $lines[] = $vietnameseKey . ': ' . $value;
+                                            }
+                                            return implode("\n", $lines);
+                                        }
+
+                                        // If not JSON, return as is
+                                        return $memberData;
+                                    }
+
+                                    // Helper function to format datetime for input
+                                    function formatDateTimeForInput($datetime)
+                                    {
+                                        if (empty($datetime)) {
+                                            return '';
+                                        }
+                                        // Convert MySQL datetime to datetime-local format
+                                        return date('Y-m-d\TH:i', strtotime($datetime));
+                                    }
+
+                                    // Get old data from session if exists (for validation errors)
+                                    $oldData = isset($_SESSION['old_data']) ? $_SESSION['old_data'] : null;
+
+                                    // Use family data or old data
+                                    $formValue = $oldData ? ($oldData['form'] ?? '') : ($family['form'] ?? '');
+                                    $emailValue = $oldData ? ($oldData['email'] ?? '') : ($family['email'] ?? '');
+                                    $userValue = $oldData ? ($oldData['user'] ?? '') : ($family['user'] ?? '');
+                                    $numberPhoneValue = $oldData ? ($oldData['number_phone'] ?? '') : ($family['number_phone'] ?? '');
+                                    $numberBankValue = $oldData ? ($oldData['number_bank'] ?? '') : ($family['number_bank'] ?? '');
+                                    $nameBankValue = $oldData ? ($oldData['name_bank'] ?? '') : ($family['name_bank'] ?? '');
+                                    $paymentAtValue = $oldData ? ($oldData['payment_at'] ?? '') : formatDateTimeForInput($family['payment_at'] ?? '');
+                                    $payDueDateValue = $oldData ? ($oldData['pay_due_date'] ?? '') : formatDateTimeForInput($family['pay_due_date'] ?? '');
+                                    $statusValue = $oldData ? ($oldData['status'] ?? '') : ($family['status'] ?? '');
+                                    $noteValue = $oldData ? ($oldData['note'] ?? '') : ($family['note'] ?? '');
+                                    $billPaymentValue = $family['bill_payment'] ?? '';
+                                    $billPaymentFiles = [];
+                                    if (!empty($billPaymentValue)) {
+                                        $dec = json_decode($billPaymentValue, true);
+                                        $billPaymentFiles = is_array($dec) ? $dec : [$billPaymentValue];
+                                    }
+                                    ?>
+                                    <form method="POST" action="/" id="edit_family_form" enctype="multipart/form-data" class="grid gap-5 lg:gap-7.5">
+                                        <input type="hidden" name="action" value="update-family">
+                                        <input type="hidden" name="id" value="<?php echo htmlspecialchars($family['id']); ?>">
+                                        <!-- Row 1: Form Type and Email -->
+                                        <div class="grid lg:grid-cols-2 gap-5" style="padding: 10px 10px 0 10px;">
+                                            <div class="flex flex-col gap-2">
                                                 <label class="kt-form-label text-mono font-semibold text-sm">
-                                                    Trạng thái <span class="text-destructive">*</span>
+                                                    Hình thức <span class="text-destructive">*</span>
                                                 </label>
-                                                <select name="status" class="kt-select" data-kt-select="true">
-                                                    <option value="active" selected>Hoạt động</option>
-                                                    <option value="inactive" <?php echo (isset($_SESSION['old_data']['status']) && $_SESSION['old_data']['status'] === 'inactive') ? 'selected' : ''; ?>>Không hoạt động</option>
+                                                <select name="form" class="kt-select" required data-kt-select="true">
+                                                    <option value="">Chọn hình thức</option>
+                                                    <option value="Đăng ký mới" <?php echo ($formValue === 'Đăng ký mới') ? 'selected' : ''; ?>>Đăng ký mới</option>
+                                                    <option value="Gia hạn" <?php echo ($formValue === 'Gia hạn') ? 'selected' : ''; ?>>Gia hạn</option>
+                                                    <option value="Nâng cấp" <?php echo ($formValue === 'Nâng cấp') ? 'selected' : ''; ?>>Nâng cấp</option>
                                                 </select>
                                             </div>
-
-                                            <div class="flex items-center gap-2.5 justify-end" style="padding: 0 10px 10px 10px;">
-                                                <a href="?act=collaborators" class="kt-btn kt-btn-outline">Hủy</a>
-                                                <button type="submit" class="kt-btn kt-btn-primary">Thêm mới</button>
+                                            <div class="flex flex-col gap-2">
+                                                <label class="kt-form-label text-mono font-semibold text-sm">
+                                                    Email <span class="text-destructive">*</span>
+                                                </label>
+                                                <label class="kt-input">
+                                                    <i class="ki-filled ki-sms"></i>
+                                                    <input type="email" name="email" placeholder="example@email.com" value="<?php echo htmlspecialchars($emailValue); ?>" required>
+                                                </label>
                                             </div>
-                                        </form>
-                                    </div>
+                                        </div>
+
+                                        <!-- Row 2: User Name and Phone Number -->
+                                        <div class="grid lg:grid-cols-2 gap-5" style="padding: 0 10px;">
+                                            <div class="flex flex-col gap-2">
+                                                <label class="kt-form-label text-mono font-semibold text-sm">
+                                                    Họ và tên <span class="text-destructive">*</span>
+                                                </label>
+                                                <label class="kt-input">
+                                                    <i class="ki-filled ki-user"></i>
+                                                    <input type="text" name="user" placeholder="Nguyễn Văn A" value="<?php echo htmlspecialchars($userValue); ?>" required>
+                                                </label>
+                                            </div>
+                                            <div class="flex flex-col gap-2">
+                                                <label class="kt-form-label text-mono font-semibold text-sm">
+                                                    Số điện thoại
+                                                </label>
+                                                <label class="kt-input">
+                                                    <i class="ki-filled ki-phone"></i>
+                                                    <input type="tel" name="number_phone" placeholder="0347895560" value="<?php echo htmlspecialchars($numberPhoneValue); ?>">
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Row 3: Bank Information -->
+                                        <div class="grid lg:grid-cols-2 gap-5" style="padding: 0 10px;">
+                                            <div class="flex flex-col gap-2">
+                                                <label class="kt-form-label text-mono font-semibold text-sm">
+                                                    Số tài khoản ngân hàng <span class="text-destructive">*</span>
+                                                </label>
+                                                <label class="kt-input">
+                                                    <i class="ki-filled ki-credit-cart"></i>
+                                                    <input type="text" name="number_bank" placeholder="19073432582017" value="<?php echo htmlspecialchars($numberBankValue); ?>" required>
+                                                </label>
+                                            </div>
+                                            <div class="flex flex-col gap-2">
+                                                <label class="kt-form-label text-mono font-semibold text-sm">
+                                                    Tên ngân hàng <span class="text-destructive">*</span>
+                                                </label>
+                                                <select name="name_bank" id="name_bank_select" class="kt-select" required>
+                                                    <option value="">Chọn ngân hàng</option>
+                                                    <?php if (!empty($nameBankValue)): ?>
+                                                        <option value="<?php echo htmlspecialchars($nameBankValue); ?>" selected><?php echo htmlspecialchars($nameBankValue); ?></option>
+                                                    <?php endif; ?>
+                                                </select>
+                                                <script>
+                                                    document.addEventListener('DOMContentLoaded', function() {
+                                                        // Gọi API danh sách ngân hàng
+                                                        fetch('https://api.vietqr.io/v2/banks')
+                                                            .then(res => res.json())
+                                                            .then(data => {
+                                                                if (data && data.data) {
+                                                                    const select = document.getElementById('name_bank_select');
+                                                                    // Xóa option cũ (trừ option đầu để chọn)
+                                                                    while (select.options.length > 1) {
+                                                                        select.remove(1);
+                                                                    }
+                                                                    data.data.forEach(function(bank) {
+                                                                        const option = document.createElement('option');
+                                                                        option.value = bank.shortName || bank.code || bank.name;
+                                                                        option.text = bank.shortName;
+                                                                        // Nếu value cũ đã chọn thì chọn lại
+                                                                        if (("<?php echo htmlspecialchars($nameBankValue); ?>").trim().toLowerCase() === (option.value || '').toLowerCase()) {
+                                                                            option.selected = true;
+                                                                        }
+                                                                        select.appendChild(option);
+                                                                    });
+                                                                }
+                                                            });
+                                                    });
+                                                </script>
+                                            </div>
+                                        </div>
+
+                                        <!-- Row 4: Payment Date and Due Date -->
+                                        <div class="grid lg:grid-cols-2 gap-5" style="padding: 0 10px;">
+                                            <div class="flex flex-col gap-2">
+                                                <label class="kt-form-label text-mono font-semibold text-sm">
+                                                    Ngày thanh toán
+                                                </label>
+                                                <label class="kt-input">
+                                                    <i class="ki-filled ki-calendar"></i>
+                                                    <input type="datetime-local" name="payment_at" value="<?php echo htmlspecialchars($paymentAtValue); ?>">
+                                                </label>
+                                            </div>
+                                            <div class="flex flex-col gap-2">
+                                                <label class="kt-form-label text-mono font-semibold text-sm">
+                                                    Ngày đáo hạn <span class="text-destructive">*</span>
+                                                </label>
+                                                <label class="kt-input">
+                                                    <i class="ki-filled ki-calendar-tick"></i>
+                                                    <input type="datetime-local" name="pay_due_date" value="<?php echo htmlspecialchars($payDueDateValue); ?>" required>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Row 5: Status -->
+                                        <div class="flex flex-col gap-2" style="padding: 0 10px;">
+                                            <label class="kt-form-label text-mono font-semibold text-sm">
+                                                Trạng thái <span class="text-destructive">*</span>
+                                            </label>
+                                            <select name="status" class="kt-select" required data-kt-select="true">
+                                                <option value="">Chọn trạng thái</option>
+                                                <option value="da thanh toan" <?php echo ($statusValue === 'da thanh toan') ? 'selected' : ''; ?>>Đã thanh toán</option>
+                                                <option value="chua thanh toan" <?php echo ($statusValue === 'chua thanh toan') ? 'selected' : ''; ?>>Chưa thanh toán</option>
+                                                <option value="dang xu ly" <?php echo ($statusValue === 'dang xu ly') ? 'selected' : ''; ?>>Đang xử lý</option>
+                                                <option value="huy" <?php echo ($statusValue === 'huy') ? 'selected' : ''; ?>>Hủy</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Row 6: Bill Payment -->
+                                        <div class="flex flex-col gap-2" style="padding: 0 10px;">
+                                            <label class="kt-form-label text-mono font-semibold text-sm">
+                                                Hóa đơn thanh toán
+                                            </label>
+                                            <div class="flex flex-col gap-2">
+                                                <label class="kt-input">
+                                                    <i class="ki-filled ki-document"></i>
+                                                    <input type="file" name="bill_payment[]" accept="image/*,.pdf,.doc,.docx" id="bill_payment_file" multiple>
+                                                </label>
+                                                <p class="text-xs text-muted-foreground">Có thể chọn nhiều ảnh/file. Chọn file mới sẽ thay thế toàn bộ file hiện tại. Tối đa 10MB/file.</p>
+                                                <?php if (!empty($billPaymentFiles)): ?>
+                                                    <div class="mt-2">
+                                                        <span class="text-xs font-medium text-muted-foreground block mb-2">File hiện tại (<?php echo count($billPaymentFiles); ?>):</span>
+                                                        <div class="flex flex-wrap gap-2">
+                                                            <?php foreach ($billPaymentFiles as $f): ?>
+                                                                <div class="flex items-center gap-2 p-3 bg-accent/60 rounded-lg border border-border max-w-full">
+                                                                    <?php if (preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $f)): ?>
+                                                                        <img src="../uploads/bills/<?php echo htmlspecialchars($f); ?>" alt="" class="w-12 h-12 object-cover rounded border border-border shrink-0">
+                                                                    <?php else: ?>
+                                                                        <span class="w-12 h-12 flex items-center justify-center shrink-0"><i class="ki-filled ki-file text-primary text-2xl"></i></span>
+                                                                    <?php endif; ?>
+                                                                    <div class="flex flex-col min-w-0">
+                                                                        <span class="text-sm font-semibold text-mono truncate"><?php echo htmlspecialchars($f); ?></span>
+                                                                        <a href="../uploads/bills/<?php echo htmlspecialchars($f); ?>" target="_blank" rel="noopener" class="text-xs text-primary hover:underline">Xem / Tải</a>
+                                                                    </div>
+                                                                </div>
+                                                            <?php endforeach; ?>
+                                                        </div>
+                                                    </div>
+                                                <?php endif; ?>
+                                                <div id="bill_payment_preview" class="hidden mt-2 flex flex-col gap-2">
+                                                    <!-- Danh sách file mới chọn sẽ được thêm vào đây bằng JS -->
+                                                </div>
+                                                <button type="button" id="clear_all_bill_files" class="kt-btn kt-btn-sm kt-btn-ghost hidden mt-1" onclick="clearFilePreview()">Xóa tất cả file mới chọn</button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Row 7: Note -->
+                                        <div class="flex flex-col gap-2" style="padding: 0 10px;">
+                                            <label class="kt-form-label text-mono font-semibold text-sm">
+                                                Ghi chú
+                                            </label>
+                                            <textarea name="note" class="kt-textarea" rows="4" placeholder="Nhập ghi chú (nếu có)"><?php echo htmlspecialchars($noteValue); ?></textarea>
+                                        </div>
+
+                                        <!-- Row 8: Members Section -->
+                                        <div class="border-t border-t-border pt-5" style="padding: 0 10px;">
+                                            <h4 class="text-mono font-semibold text-base mb-5">
+                                                Thông tin thành viên
+                                            </h4>
+                                            <div class="grid gap-5" style="margin-top: 5px">
+                                                <div class="flex flex-col gap-2">
+                                                    <label class="kt-form-label text-mono font-semibold text-sm">
+                                                        Thành viên 1
+                                                    </label>
+                                                    <textarea name="member1" class="kt-textarea" rows="6" placeholder="Mã đơn hàng: 863470&#10;Tên sản phẩm: Nâng Cấp Youtube Premium & YouTube Music 6 Tháng x 1&#10;Email: nhunn9605@gmail.com&#10;Khu vực bạn sống: Việt Nam&#10;Ngày mua: 18:54:15 19/01/2026"><?php
+                                                                                                                                                                                                                                                                                                                    $member1Value = $oldData ? ($oldData['member1'] ?? '') : formatMemberForDisplay($family['member1'] ?? '');
+                                                                                                                                                                                                                                                                                                                    echo htmlspecialchars($member1Value);
+                                                                                                                                                                                                                                                                                                                    ?></textarea>
+                                                </div>
+                                                <div class="flex flex-col gap-2">
+                                                    <label class="kt-form-label text-mono font-semibold text-sm">
+                                                        Thành viên 2
+                                                    </label>
+                                                    <textarea name="member2" class="kt-textarea" rows="6" placeholder="Mã đơn hàng: 863470&#10;Tên sản phẩm: Nâng Cấp Youtube Premium & YouTube Music 6 Tháng x 1&#10;Email: nhunn9605@gmail.com&#10;Khu vực bạn sống: Việt Nam&#10;Ngày mua: 18:54:15 19/01/2026"><?php
+                                                                                                                                                                                                                                                                                                                    $member2Value = $oldData ? ($oldData['member2'] ?? '') : formatMemberForDisplay($family['member2'] ?? '');
+                                                                                                                                                                                                                                                                                                                    echo htmlspecialchars($member2Value);
+                                                                                                                                                                                                                                                                                                                    ?></textarea>
+                                                </div>
+                                                <div class="flex flex-col gap-2">
+                                                    <label class="kt-form-label text-mono font-semibold text-sm">
+                                                        Thành viên 3
+                                                    </label>
+                                                    <textarea name="member3" class="kt-textarea" rows="6" placeholder="Mã đơn hàng: 863470&#10;Tên sản phẩm: Nâng Cấp Youtube Premium & YouTube Music 6 Tháng x 1&#10;Email: nhunn9605@gmail.com&#10;Khu vực bạn sống: Việt Nam&#10;Ngày mua: 18:54:15 19/01/2026"><?php
+                                                                                                                                                                                                                                                                                                                    $member3Value = $oldData ? ($oldData['member3'] ?? '') : formatMemberForDisplay($family['member3'] ?? '');
+                                                                                                                                                                                                                                                                                                                    echo htmlspecialchars($member3Value);
+                                                                                                                                                                                                                                                                                                                    ?></textarea>
+                                                </div>
+                                                <div class="flex flex-col gap-2">
+                                                    <label class="kt-form-label text-mono font-semibold text-sm">
+                                                        Thành viên 4
+                                                    </label>
+                                                    <textarea name="member4" class="kt-textarea" rows="6" placeholder="Mã đơn hàng: 863470&#10;Tên sản phẩm: Nâng Cấp Youtube Premium & YouTube Music 6 Tháng x 1&#10;Email: nhunn9605@gmail.com&#10;Khu vực bạn sống: Việt Nam&#10;Ngày mua: 18:54:15 19/01/2026"><?php
+                                                                                                                                                                                                                                                                                                                    $member4Value = $oldData ? ($oldData['member4'] ?? '') : formatMemberForDisplay($family['member4'] ?? '');
+                                                                                                                                                                                                                                                                                                                    echo htmlspecialchars($member4Value);
+                                                                                                                                                                                                                                                                                                                    ?></textarea>
+                                                </div>
+                                                <div class="flex flex-col gap-2">
+                                                    <label class="kt-form-label text-mono font-semibold text-sm">
+                                                        Thành viên 5
+                                                    </label>
+                                                    <textarea name="member5" class="kt-textarea" rows="6" placeholder="Mã đơn hàng: 863470&#10;Tên sản phẩm: Nâng Cấp Youtube Premium & YouTube Music 6 Tháng x 1&#10;Email: nhunn9605@gmail.com&#10;Khu vực bạn sống: Việt Nam&#10;Ngày mua: 18:54:15 19/01/2026"><?php
+                                                                                                                                                                                                                                                                                                                    $member5Value = $oldData ? ($oldData['member5'] ?? '') : formatMemberForDisplay($family['member5'] ?? '');
+                                                                                                                                                                                                                                                                                                                    echo htmlspecialchars($member5Value);
+                                                                                                                                                                                                                                                                                                                    ?></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Form Actions -->
+                                        <div class="flex items-center justify-end gap-2.5 pt-5 border-t border-t-border" style="padding: 10px 10px;">
+                                            <a href="/" class="kt-btn kt-btn-outline">Hủy</a>
+                                            <button type="submit" class="kt-btn kt-btn-primary">
+                                                Cập nhật Family
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
+                        <!-- end: form card -->
                     </div>
-
-                    <script src="../dist/assets/js/core.bundle.js"></script>
-                    <script src="../dist/assets/vendors/ktui/ktui.min.js"></script>
-                    <script>
-                        // Initialize CKEditor
-                        ClassicEditor
-                            .create(document.querySelector('#content_editor'), {
-                                toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'blockQuote', 'insertTable', '|', 'undo', 'redo']
-                            })
-                            .then(editor => {
-                                window.editor = editor;
-                            })
-                            .catch(error => {
-                                console.error('Error initializing CKEditor:', error);
-                            });
-
-                        // Form validation and submit handler
-                        document.getElementById('add_collaborator_form').addEventListener('submit', function(e) {
-                            let isValid = true;
-                            let errorMessage = '';
-
-                            // Validate CKEditor content
-                            if (window.editor) {
-                                const editorData = window.editor.getData();
-                                const textContent = editorData.replace(/<[^>]*>/g, '').trim();
-
-                                if (!textContent) {
-                                    isValid = false;
-                                    errorMessage = 'Vui lòng nhập nội dung';
-                                } else {
-                                    // Update hidden textarea with editor content
-                                    document.getElementById('content_editor').value = editorData;
-                                }
-                            } else {
-                                // Fallback if editor not initialized
-                                const textarea = document.getElementById('content_editor');
-                                if (!textarea.value.trim()) {
-                                    isValid = false;
-                                    errorMessage = 'Vui lòng nhập nội dung';
-                                }
-                            }
-
-                            // Validate status
-                            const statusSelect = document.querySelector('select[name="status"]');
-                            if (!statusSelect || !statusSelect.value) {
-                                isValid = false;
-                                if (errorMessage) {
-                                    errorMessage += ' và chọn trạng thái';
-                                } else {
-                                    errorMessage = 'Vui lòng chọn trạng thái';
-                                }
-                            }
-
-                            if (!isValid) {
-                                e.preventDefault();
-                                alert(errorMessage);
-                                return false;
-                            }
-                        });
-                    </script>
                 </div>
                 <!-- End of Container -->
             </main>
@@ -1984,77 +2213,6 @@
             </div>
         </div>
     </div>
-    <!-- Member Detail Modal -->
-    <div class="kt-modal" data-kt-modal="true" id="member_detail_modal">
-        <div class="kt-modal-content max-w-[600px] top-[15%]">
-            <div class="kt-modal-header">
-                <h3 class="kt-modal-title">
-                    Thông tin thành viên
-                </h3>
-                <button class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost shrink-0"
-                    data-kt-modal-dismiss="true">
-                    <i class="ki-filled ki-cross">
-                    </i>
-                </button>
-            </div>
-            <div class="kt-modal-body grid gap-5 px-0 py-5">
-                <div class="flex flex-col px-5 gap-4">
-                    <div class="grid gap-4">
-                        <div class="flex flex-col gap-2">
-                            <label class="text-mono font-semibold text-sm text-secondary-foreground">
-                                Mã đơn hàng
-                            </label>
-                            <div class="text-sm font-medium text-foreground" id="modal_order_code">
-                                -
-                            </div>
-                        </div>
-                        <div class="border-b border-b-border"></div>
-                        <div class="flex flex-col gap-2">
-                            <label class="text-mono font-semibold text-sm text-secondary-foreground">
-                                Tên sản phẩm
-                            </label>
-                            <div class="text-sm font-medium text-foreground" id="modal_product_name">
-                                -
-                            </div>
-                        </div>
-                        <div class="border-b border-b-border"></div>
-                        <div class="flex flex-col gap-2">
-                            <label class="text-mono font-semibold text-sm text-secondary-foreground">
-                                Email
-                            </label>
-                            <div class="text-sm font-medium text-foreground" id="modal_email">
-                                -
-                            </div>
-                        </div>
-                        <div class="border-b border-b-border"></div>
-                        <div class="flex flex-col gap-2">
-                            <label class="text-mono font-semibold text-sm text-secondary-foreground">
-                                Khu vực bạn sống
-                            </label>
-                            <div class="text-sm font-medium text-foreground" id="modal_region">
-                                -
-                            </div>
-                        </div>
-                        <div class="border-b border-b-border"></div>
-                        <div class="flex flex-col gap-2">
-                            <label class="text-mono font-semibold text-sm text-secondary-foreground">
-                                Ngày mua
-                            </label>
-                            <div class="text-sm font-medium text-foreground" id="modal_purchase_date">
-                                -
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="kt-modal-footer flex items-center justify-end gap-2.5 px-5 py-4 border-t border-t-border">
-                <button class="kt-btn kt-btn-outline" data-kt-modal-dismiss="true">
-                    Đóng
-                </button>
-            </div>
-        </div>
-    </div>
-    <!-- End of Member Detail Modal -->
     <!-- End of Page -->
     <!-- Scripts -->
     <script src="../dist/assets/js/core.bundle.js">
@@ -2068,162 +2226,139 @@
     <script src="../dist/assets/js/layouts/demo1.js">
     </script>
     <script>
-        // Function to delete family
-        function deleteFamily(id) {
-            if (confirm('Bạn có chắc chắn muốn xóa family này không?')) {
-                // Create form to submit delete request
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '/';
-
-                const actionInput = document.createElement('input');
-                actionInput.type = 'hidden';
-                actionInput.name = 'action';
-                actionInput.value = 'delete-family';
-
-                const idInput = document.createElement('input');
-                idInput.type = 'hidden';
-                idInput.name = 'id';
-                idInput.value = id;
-
-                form.appendChild(actionInput);
-                form.appendChild(idInput);
-                document.body.appendChild(form);
-                form.submit();
-            }
-        }
-
-        // Function to show member detail modal
-        function showMemberModal(memberData, memberIndex) {
-            console.log('showMemberModal called', memberData, memberIndex);
-
-            // Populate modal with member data
-            const orderCodeEl = document.getElementById('modal_order_code');
-            const productNameEl = document.getElementById('modal_product_name');
-            const emailEl = document.getElementById('modal_email');
-            const regionEl = document.getElementById('modal_region');
-            const purchaseDateEl = document.getElementById('modal_purchase_date');
-
-            if (orderCodeEl) orderCodeEl.textContent = memberData.order_code || '-';
-            if (productNameEl) productNameEl.textContent = memberData.product_name || '-';
-            if (emailEl) emailEl.textContent = memberData.email || '-';
-            if (regionEl) regionEl.textContent = memberData.region || '-';
-            if (purchaseDateEl) purchaseDateEl.textContent = memberData.purchase_date || '-';
-
-            // Update modal title
-            const modal = document.getElementById('member_detail_modal');
-            if (!modal) {
-                console.error('Modal not found');
-                alert('Không tìm thấy modal');
-                return;
-            }
-
-            const modalTitle = modal.querySelector('.kt-modal-title');
-            if (modalTitle) {
-                modalTitle.textContent = 'Thông tin thành viên ' + memberIndex;
-            }
-
-            // Method 1: Try using data-kt-modal-toggle
-            const triggerBtn = document.createElement('button');
-            triggerBtn.setAttribute('data-kt-modal-toggle', 'member_detail_modal');
-            triggerBtn.style.position = 'fixed';
-            triggerBtn.style.left = '-9999px';
-            triggerBtn.style.opacity = '0';
-            document.body.appendChild(triggerBtn);
-
-            // Trigger click
-            setTimeout(function() {
-                triggerBtn.click();
-
-                // Clean up after a delay
-                setTimeout(function() {
-                    if (document.body.contains(triggerBtn)) {
-                        document.body.removeChild(triggerBtn);
-                    }
-                }, 500);
-            }, 50);
-
-            // Fallback: If framework doesn't work, show manually
-            setTimeout(function() {
-                if (!modal.classList.contains('show')) {
-                    console.log('Using fallback method');
-                    modal.style.display = 'block';
-                    modal.classList.add('show');
-                    document.body.style.overflow = 'hidden';
-
-                    // Add backdrop
-                    let backdrop = document.querySelector('.kt-modal-backdrop');
-                    if (!backdrop) {
-                        backdrop = document.createElement('div');
-                        backdrop.className = 'kt-modal-backdrop';
-                        backdrop.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1040;';
-                        document.body.appendChild(backdrop);
-                    }
-                    backdrop.style.display = 'block';
-                }
-            }, 200);
-        }
-
-        // Initialize event listeners for member view buttons
+        // File upload preview handler (nhiều file)
         document.addEventListener('DOMContentLoaded', function() {
-            // Use event delegation for dynamically added buttons
-            document.addEventListener('click', function(e) {
-                if (e.target.closest('.member-view-btn')) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const btn = e.target.closest('.member-view-btn');
-                    try {
-                        const memberDataStr = btn.getAttribute('data-member-data');
-                        if (!memberDataStr) {
-                            console.error('No member data found');
-                            alert('Không tìm thấy dữ liệu member');
-                            return;
+            const fileInput = document.getElementById('bill_payment_file');
+            const previewContainer = document.getElementById('bill_payment_preview');
+            const clearAllBtn = document.getElementById('clear_all_bill_files');
+
+            if (fileInput) {
+                fileInput.addEventListener('change', function(e) {
+                    const files = e.target.files;
+                    previewContainer.innerHTML = '';
+                    if (files && files.length > 0) {
+                        previewContainer.classList.remove('hidden');
+                        if (clearAllBtn) clearAllBtn.classList.remove('hidden');
+                        for (let i = 0; i < files.length; i++) {
+                            const file = files[i];
+                            const item = document.createElement('div');
+                            item.className = 'flex items-center gap-2 p-3 bg-accent/60 rounded-lg border border-border';
+                            let thumb = '';
+                            if (file.type.startsWith('image/')) {
+                                const reader = new FileReader();
+                                reader.onload = function(ev) {
+                                    const img = item.querySelector('.bill-thumb');
+                                    if (img) img.src = ev.target.result;
+                                };
+                                reader.readAsDataURL(file);
+                                thumb = '<img class="bill-thumb w-12 h-12 object-cover rounded border border-border shrink-0" src="" alt="">';
+                            } else {
+                                thumb = '<span class="w-12 h-12 flex items-center justify-center shrink-0"><i class="ki-filled ki-file text-primary text-2xl"></i></span>';
+                            }
+                            item.innerHTML = thumb + '<div class="flex flex-col grow min-w-0"><span class="text-sm font-semibold text-mono truncate">' + escapeHtml(file.name) + '</span><span class="text-xs text-secondary-foreground">' + formatFileSize(file.size) + '</span></div>';
+                            previewContainer.appendChild(item);
                         }
-                        const memberData = JSON.parse(memberDataStr);
-                        const memberIndex = btn.getAttribute('data-member-index');
-                        showMemberModal(memberData, memberIndex);
-                    } catch (e) {
-                        console.error('Error parsing member data:', e);
-                        alert('Có lỗi khi hiển thị thông tin member: ' + e.message);
+                    } else {
+                        previewContainer.classList.add('hidden');
+                        if (clearAllBtn) clearAllBtn.classList.add('hidden');
                     }
-                }
+                });
+            }
 
-                // Close modal when clicking backdrop
-                if (e.target.classList.contains('kt-modal-backdrop')) {
-                    closeMemberModal();
-                }
-            });
-
-            // Handle modal close buttons
-            const modal = document.getElementById('member_detail_modal');
-            if (modal) {
-                const closeButtons = modal.querySelectorAll('[data-kt-modal-dismiss="true"]');
-                closeButtons.forEach(function(btn) {
-                    btn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        closeMemberModal();
+            // Parse member data before form submit
+            const form = document.getElementById('edit_family_form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    // Parse member data to JSON
+                    const memberFields = ['member1', 'member2', 'member3', 'member4', 'member5'];
+                    memberFields.forEach(function(fieldName) {
+                        const textarea = form.querySelector('[name="' + fieldName + '"]');
+                        if (textarea && textarea.value.trim()) {
+                            const parsedData = parseMemberData(textarea.value);
+                            if (parsedData) {
+                                // Create hidden input with JSON data
+                                let hiddenInput = form.querySelector('[name="' + fieldName + '_json"]');
+                                if (!hiddenInput) {
+                                    hiddenInput = document.createElement('input');
+                                    hiddenInput.type = 'hidden';
+                                    hiddenInput.name = fieldName + '_json';
+                                    form.appendChild(hiddenInput);
+                                }
+                                hiddenInput.value = JSON.stringify(parsedData);
+                            }
+                        }
                     });
                 });
             }
         });
 
-        // Function to close member modal
-        function closeMemberModal() {
-            const modal = document.getElementById('member_detail_modal');
-            if (modal) {
-                modal.classList.remove('show');
-                modal.style.display = 'none';
-                document.body.style.overflow = '';
-                document.body.classList.remove('kt-modal-open');
+        function parseMemberData(text) {
+            if (!text || !text.trim()) return null;
+            const t = text.trim();
 
-                const backdrop = document.querySelector('.kt-modal-backdrop');
-                if (backdrop) {
-                    backdrop.style.display = 'none';
-                    backdrop.classList.remove('show');
-                }
+            // Dạng JSON: {"order_code":"863470","product_name":"...","email":"...","region":"...","purchase_date":"..."}
+            if (t.startsWith('{')) {
+                try {
+                    const parsed = JSON.parse(t);
+                    if (parsed && typeof parsed === 'object') {
+                        const result = {};
+                        ['order_code', 'product_name', 'email', 'region', 'purchase_date'].forEach(function(k) {
+                            if (parsed[k] !== undefined && parsed[k] !== null && parsed[k] !== '') {
+                                result[k] = String(parsed[k]);
+                            }
+                        });
+                        if (Object.keys(result).length > 0) return result;
+                    }
+                } catch (e) { /* fall through to key:value */ }
             }
+
+            // Dạng "Key: Value" từng dòng (Mã đơn hàng / mã_đh, Tên sản phẩm / sản_phẩm, ...)
+            const lines = t.split('\n').map(function(line) { return line.trim(); }).filter(function(line) { return line; });
+            const data = {};
+            const keyMap = {
+                'Mã đơn hàng': 'order_code', 'mã_đh': 'order_code',
+                'Tên sản phẩm': 'product_name', 'sản_phẩm': 'product_name',
+                'Email': 'email', 'Khu vực bạn sống': 'region', 'Ngày mua': 'purchase_date'
+            };
+            lines.forEach(function(line) {
+                const colonIndex = line.indexOf(':');
+                if (colonIndex > 0) {
+                    const key = line.substring(0, colonIndex).trim();
+                    const value = line.substring(colonIndex + 1).trim();
+                    const englishKey = keyMap[key] || key.toLowerCase().replace(/\s+/g, '_');
+                    data[englishKey] = value;
+                }
+            });
+            return Object.keys(data).length > 0 ? data : null;
+        }
+
+        function clearFilePreview() {
+            const fileInput = document.getElementById('bill_payment_file');
+            const previewContainer = document.getElementById('bill_payment_preview');
+            const clearAllBtn = document.getElementById('clear_all_bill_files');
+            if (fileInput) fileInput.value = '';
+            if (previewContainer) {
+                previewContainer.innerHTML = '';
+                previewContainer.classList.add('hidden');
+            }
+            if (clearAllBtn) clearAllBtn.classList.add('hidden');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
         }
     </script>
+    <!-- End of Scripts -->
 </body>
 
 <!-- Mirrored from keenthemes.com/metronic/tailwind/demo1/ by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 19 Jan 2026 07:07:01 GMT -->

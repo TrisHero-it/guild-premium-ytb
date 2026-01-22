@@ -99,7 +99,7 @@
                 id="sidebar_header">
                 <a class="dark:hidden" href="index.html">
                     <img class="default-logo min-h-[22px] max-w-none"
-                        src="https://keenthemes.com/metronic/tailwind/dist/assets/media/app/default-logo.svg" />
+                        src="uploads/Logo.png" style="width: 220px" alt="Muakey" />
                     <img class="small-logo min-h-[18px] max-w-none" style="width : 29px"
                         src="https://muakey.com/favicon.ico" />
                 </a>
@@ -109,13 +109,7 @@
                     <img class="small-logo min-h-[18px] max-w-none" style="width : 29px"
                         src="https://muakey.com/favicon.ico" />
                 </a>
-                <button class="kt-btn kt-btn-outline kt-btn-icon size-[30px] absolute start-full top-2/4 -translate-x-2/4 -translate-y-2/4 rtl:translate-x-2/4"
-                    data-kt-toggle="body" data-kt-toggle-class="kt-sidebar-collapse"
-                    id="sidebar_toggle">
-                    <i
-                        class="ki-filled ki-black-left-line kt-toggle-active:rotate-180 transition-all duration-300 rtl:translate rtl:rotate-180 rtl:kt-toggle-active:rotate-0">
-                    </i>
-                </button>
+
             </div>
             <div class="kt-sidebar-content flex grow shrink-0 py-5 pe-2" id="sidebar_content">
                 <div class="kt-scrollable-y-hover grow shrink-0 flex ps-2 lg:ps-5 pe-1 lg:pe-3"
@@ -435,49 +429,6 @@
                 <!-- End of Container -->
             </main>
             <!-- End of Content -->
-            <!-- Footer -->
-            <footer class="kt-footer">
-                <!-- Container -->
-                <div class="kt-container-fixed">
-                    <div
-                        class="flex flex-col md:flex-row justify-center md:justify-between items-center gap-3 py-5">
-                        <div class="flex order-2 md:order-1 gap-2 font-normal text-sm">
-                            <span class="text-secondary-foreground">
-                                2026©
-                            </span>
-                            <a class="text-secondary-foreground hover:text-primary"
-                                href="https://keenthemes.com/">
-                                Keenthemes Inc.
-                            </a>
-                        </div>
-                        <nav
-                            class="flex order-1 md:order-2 gap-4 font-normal text-sm text-secondary-foreground">
-                            <a class="hover:text-primary"
-                                href="https://keenthemes.com/metronic/tailwind/docs">
-                                Docs
-                            </a>
-                            <a class="hover:text-primary"
-                                href="https://1.envato.market/Vm7VRE">
-                                Purchase
-                            </a>
-                            <a class="hover:text-primary"
-                                href="https://keenthemes.com/metronic/tailwind/docs/getting-started/license">
-                                FAQ
-                            </a>
-                            <a class="hover:text-primary"
-                                href="https://devs.keenthemes.com/">
-                                Support
-                            </a>
-                            <a class="hover:text-primary"
-                                href="https://keenthemes.com/metronic/tailwind/docs/getting-started/license">
-                                License
-                            </a>
-                        </nav>
-                    </div>
-                </div>
-                <!-- End of Container -->
-            </footer>
-            <!-- End of Footer -->
         </div>
         <!-- End of Wrapper -->
     </div>

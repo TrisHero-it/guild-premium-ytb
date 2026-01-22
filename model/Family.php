@@ -5,18 +5,67 @@ class family
 {
     function getAll()
     {
+        $result = $this->getBySearch('', 1, 0);
+        return $result['items'];
+    }
+
+    /**
+     * Lấy danh sách family có tìm kiếm theo order_code (trong member) và phân trang.
+     * @param string $orderCode Mã đơn hàng cần tìm (trong member1..member5 JSON)
+     * @param int $page Trang hiện tại (bắt đầu 1)
+     * @param int $perPage Số bản ghi mỗi trang. 0 = không phân trang (lấy hết)
+     * @return array ['items' => array, 'total' => int]
+     */
+    function getBySearch($orderCode = '', $page = 1, $perPage = 20)
+    {
         $db = new db();
-        $query = "SELECT * FROM family ORDER BY id DESC";
-        $results = $db->getData($query);
-        
-        // Decode JSON members if exists
+        $conn = $db->getConnect();
+
+        $orderCode = trim($orderCode);
+        $hasSearch = $orderCode !== '';
+
+        // WHERE: tìm order_code trong JSON của member1..member5 (MySQL JSON_EXTRACT)
+        $whereSql = '';
+        $params = [];
+        if ($hasSearch) {
+            $term = '%' . $orderCode . '%';
+            $whereSql = " WHERE (
+                JSON_UNQUOTE(JSON_EXTRACT(member1, '$.order_code')) LIKE :term1
+                OR JSON_UNQUOTE(JSON_EXTRACT(member2, '$.order_code')) LIKE :term2
+                OR JSON_UNQUOTE(JSON_EXTRACT(member3, '$.order_code')) LIKE :term3
+                OR JSON_UNQUOTE(JSON_EXTRACT(member4, '$.order_code')) LIKE :term4
+                OR JSON_UNQUOTE(JSON_EXTRACT(member5, '$.order_code')) LIKE :term5
+            )";
+            $params[':term1'] = $term;
+            $params[':term2'] = $term;
+            $params[':term3'] = $term;
+            $params[':term4'] = $term;
+            $params[':term5'] = $term;
+        }
+
+        // Đếm tổng số bản ghi
+        $countQuery = "SELECT COUNT(*) FROM family" . $whereSql;
+        $stmtCount = $conn->prepare($countQuery);
+        $stmtCount->execute($params);
+        $total = (int) $stmtCount->fetchColumn();
+
+        // Lấy danh sách có ORDER BY và LIMIT/OFFSET
+        $query = "SELECT * FROM family" . $whereSql . " ORDER BY id DESC";
+        if ($perPage > 0) {
+            $offset = max(0, ($page - 1) * $perPage);
+            $query .= " LIMIT " . (int) $perPage . " OFFSET " . (int) $offset;
+        }
+        $stmt = $conn->prepare($query);
+        $stmt->execute($params);
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
         if (is_array($results)) {
             foreach ($results as &$row) {
                 $row = $this->decodeMemberData($row);
             }
         }
-        
-        return $results;
+
+        return ['items' => $results, 'total' => $total];
     }
     
     /**

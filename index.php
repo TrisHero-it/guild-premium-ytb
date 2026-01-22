@@ -14,18 +14,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 require_once __DIR__ . '/controller/FamilyController.php';
                                 $controller = new FamilyController();
                                 $controller->add();
+                                break;
                         case 'delete-family':
                                 require_once __DIR__ . '/controller/FamilyController.php';
                                 $controller = new FamilyController();
                                 $controller->delete();
+                                break;
+                        case 'update-family':
+                                require_once __DIR__ . '/controller/FamilyController.php';
+                                $controller = new FamilyController();
+                                $controller->update();
+                                break;
                         case 'add-collaborator':
                                 require_once __DIR__ . '/controller/CollaboratorsController.php';
                                 $controller = new CollaboratorsController();
                                 $controller->add();
+                                break;
                         case 'update-collaborator':
                                 require_once __DIR__ . '/controller/CollaboratorsController.php';
                                 $controller = new CollaboratorsController();
                                 $controller->update();
+                                break;
                         case 'delete-collaborator':
                                 require_once __DIR__ . '/controller/CollaboratorsController.php';
                                 $controller = new CollaboratorsController();
@@ -65,11 +74,26 @@ if ($act === 'collaborators') {
 } else {
         // Default: Family management
         $familyController = new FamilyController();
-        $families = $familyController->getAll();
+        $orderCode = isset($_GET['order_code']) ? trim($_GET['order_code']) : '';
+        $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
+        $perPage = 20;
 
         if ($act === 'add-family') {
                 include 'views/youtube/add.php';
+        } elseif ($act === 'edit-family' && isset($_GET['id'])) {
+                $family = $familyController->getById($_GET['id']);
+                if (!$family) {
+                        $_SESSION['errors'] = ["Không tìm thấy family"];
+                        header("Location: /");
+                        exit;
+                }
+                include 'views/youtube/edit.php';
         } else {
+                $listResult = $familyController->getListWithSearch($orderCode, $page, $perPage);
+                $families = $listResult['items'];
+                $totalFamilies = $listResult['total'];
+                $page = $listResult['page'];
+                $perPage = $listResult['per_page'];
                 include 'views/youtube/index.php';
         }
 }

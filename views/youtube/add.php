@@ -92,23 +92,17 @@
                 id="sidebar_header">
                 <a class="dark:hidden" href="index.html">
                     <img class="default-logo min-h-[22px] max-w-none"
-                        src="https://keenthemes.com/metronic/tailwind/dist/assets/media/app/default-logo.svg" />
+                        src="uploads/Logo.png" style="width: 220px" alt="Muakey" />
                     <img class="small-logo min-h-[18px] max-w-none" style="width : 29px"
                         src="https://muakey.com/favicon.ico" />
                 </a>
                 <a class="hidden dark:block" href="index.html">
                     <img class="default-logo min-h-[22px] max-w-none"
-                        src="https://keenthemes.com/metronic/tailwind/dist/assets/media/app/default-logo-dark.svg" />
+                        src="" alt="Muakey" />
                     <img class="small-logo min-h-[18px] max-w-none" style="width : 29px"
                         src="https://muakey.com/favicon.ico" />
                 </a>
-                <button class="kt-btn kt-btn-outline kt-btn-icon size-[30px] absolute start-full top-2/4 -translate-x-2/4 -translate-y-2/4 rtl:translate-x-2/4"
-                    data-kt-toggle="body" data-kt-toggle-class="kt-sidebar-collapse"
-                    id="sidebar_toggle">
-                    <i
-                        class="ki-filled ki-black-left-line kt-toggle-active:rotate-180 transition-all duration-300 rtl:translate rtl:rotate-180 rtl:kt-toggle-active:rotate-0">
-                    </i>
-                </button>
+
             </div>
             <div class="kt-sidebar-content flex grow shrink-0 py-5 pe-2" id="sidebar_content">
                 <div class="kt-scrollable-y-hover grow shrink-0 flex ps-2 lg:ps-5 pe-1 lg:pe-3"
@@ -406,23 +400,13 @@
                                             <div class="flex flex-col gap-2">
                                                 <label class="kt-input">
                                                     <i class="ki-filled ki-document"></i>
-                                                    <input type="file" name="bill_payment" accept="image/*,.pdf,.doc,.docx" id="bill_payment_file">
+                                                    <input type="file" name="bill_payment[]" accept="image/*,.pdf,.doc,.docx" id="bill_payment_file" multiple>
                                                 </label>
-                                                <div id="bill_payment_preview" class="hidden mt-2">
-                                                    <div class="flex items-center gap-2 p-3 bg-accent/60 rounded-lg border border-border">
-                                                        <i class="ki-filled ki-file text-primary text-lg"></i>
-                                                        <div class="flex flex-col grow">
-                                                            <span class="text-sm font-semibold text-mono" id="file_name"></span>
-                                                            <span class="text-xs text-secondary-foreground" id="file_size"></span>
-                                                        </div>
-                                                        <button type="button" class="kt-btn kt-btn-icon kt-btn-sm kt-btn-ghost" onclick="clearFilePreview()">
-                                                            <i class="ki-filled ki-cross"></i>
-                                                        </button>
-                                                    </div>
-                                                    <div id="image_preview" class="hidden mt-2">
-                                                        <img id="preview_img" src="" alt="Preview" class="max-w-full max-h-48 rounded-lg border border-border">
-                                                    </div>
+                                                <p class="text-xs text-muted-foreground">Có thể chọn nhiều ảnh/file (ảnh, PDF, DOC, DOCX). Tối đa 10MB/file.</p>
+                                                <div id="bill_payment_preview" class="hidden mt-2 flex flex-col gap-2">
+                                                    <!-- Danh sách file đã chọn sẽ được thêm vào đây bằng JS -->
                                                 </div>
+                                                <button type="button" id="clear_all_bill_files" class="kt-btn kt-btn-sm kt-btn-ghost hidden mt-1" onclick="clearFilePreview()">Xóa tất cả</button>
                                             </div>
                                         </div>
 
@@ -439,22 +423,13 @@
                                             <h4 class="text-mono font-semibold text-base mb-5">
                                                 Thông tin thành viên
                                             </h4>
-                                            <div class="mb-4 p-3 bg-accent/30 border border-border rounded-lg">
-                                                <p class="text-sm text-secondary-foreground mb-2">
-                                                    <strong class="text-foreground">Hướng dẫn nhập:</strong> Nhập thông tin theo định dạng sau (mỗi dòng một thông tin):
-                                                </p>
-                                                <pre class="text-xs bg-background p-2 rounded border border-border overflow-x-auto">Mã đơn hàng: 863470
-Tên sản phẩm: Nâng Cấp Youtube Premium & YouTube Music 6 Tháng x 1
-Email: nhunn9605@gmail.com
-Khu vực bạn sống: Việt Nam
-Ngày mua: 18:54:15 19/01/2026</pre>
-                                            </div>
+                                            <p class="text-xs text-muted-foreground mb-5">Hỗ trợ dạng JSON hoặc key: value (Mã đơn hàng/mã_đh, Tên sản phẩm/sản_phẩm, Email, Khu vực bạn sống, Ngày mua)</p>
                                             <div class="grid gap-5" style="margin-top: 5px">
                                                 <div class="flex flex-col gap-2">
                                                     <label class="kt-form-label text-mono font-semibold text-sm">
                                                         Thành viên 1
                                                     </label>
-                                                    <textarea name="member1" class="kt-textarea" rows="6" placeholder="Mã đơn hàng: 863470&#10;Tên sản phẩm: Nâng Cấp Youtube Premium & YouTube Music 6 Tháng x 1&#10;Email: nhunn9605@gmail.com&#10;Khu vực bạn sống: Việt Nam&#10;Ngày mua: 18:54:15 19/01/2026"></textarea>
+                                                    <textarea name="member1" class="kt-textarea" rows="6" placeholder="{&quot;order_code&quot;:&quot;863470&quot;,&quot;product_name&quot;:&quot;Nâng Cấp Youtube Premium &amp; YouTube Music 12 Tháng x 1&quot;,&quot;email&quot;:&quot;nhunn9605@gmail.com&quot;,&quot;region&quot;:&quot;Việt Nam&quot;,&quot;purchase_date&quot;:&quot;18:54:15 19/01/2026&quot;}"></textarea>
                                                 </div>
                                                 <div class="flex flex-col gap-2">
                                                     <label class="kt-form-label text-mono font-semibold text-sm">
@@ -499,49 +474,6 @@ Ngày mua: 18:54:15 19/01/2026</pre>
                 <!-- End of Container -->
             </main>
             <!-- End of Content -->
-            <!-- Footer -->
-            <footer class="kt-footer">
-                <!-- Container -->
-                <div class="kt-container-fixed">
-                    <div
-                        class="flex flex-col md:flex-row justify-center md:justify-between items-center gap-3 py-5">
-                        <div class="flex order-2 md:order-1 gap-2 font-normal text-sm">
-                            <span class="text-secondary-foreground">
-                                2026©
-                            </span>
-                            <a class="text-secondary-foreground hover:text-primary"
-                                href="https://keenthemes.com/">
-                                Keenthemes Inc.
-                            </a>
-                        </div>
-                        <nav
-                            class="flex order-1 md:order-2 gap-4 font-normal text-sm text-secondary-foreground">
-                            <a class="hover:text-primary"
-                                href="https://keenthemes.com/metronic/tailwind/docs">
-                                Docs
-                            </a>
-                            <a class="hover:text-primary"
-                                href="https://1.envato.market/Vm7VRE">
-                                Purchase
-                            </a>
-                            <a class="hover:text-primary"
-                                href="https://keenthemes.com/metronic/tailwind/docs/getting-started/license">
-                                FAQ
-                            </a>
-                            <a class="hover:text-primary"
-                                href="https://devs.keenthemes.com/">
-                                Support
-                            </a>
-                            <a class="hover:text-primary"
-                                href="https://keenthemes.com/metronic/tailwind/docs/getting-started/license">
-                                License
-                            </a>
-                        </nav>
-                    </div>
-                </div>
-                <!-- End of Container -->
-            </footer>
-            <!-- End of Footer -->
         </div>
         <!-- End of Wrapper -->
     </div>
@@ -1860,7 +1792,6 @@ Ngày mua: 18:54:15 19/01/2026</pre>
             </div>
         </div>
     </div>
-    <!-- End of Share Profile Modal -->
     <div class="kt-modal" data-kt-modal="true" id="give_award_modal">
         <div class="kt-modal-content max-w-[500px] top-[15%]">
             <div class="kt-modal-header pr-2.5">
@@ -2154,8 +2085,7 @@ Ngày mua: 18:54:15 19/01/2026</pre>
             </div>
         </div>
     </div>
-    <!-- End of Page -->
-    <!-- Scripts -->
+
     <script src="../dist/assets/js/core.bundle.js">
     </script>
     <script src="../dist/assets/vendors/ktui/ktui.min.js">
@@ -2167,35 +2097,41 @@ Ngày mua: 18:54:15 19/01/2026</pre>
     <script src="../dist/assets/js/layouts/demo1.js">
     </script>
     <script>
-        // File upload preview handler
+        // File upload preview handler (nhiều file)
         document.addEventListener('DOMContentLoaded', function() {
             const fileInput = document.getElementById('bill_payment_file');
             const previewContainer = document.getElementById('bill_payment_preview');
-            const fileName = document.getElementById('file_name');
-            const fileSize = document.getElementById('file_size');
-            const imagePreview = document.getElementById('image_preview');
-            const previewImg = document.getElementById('preview_img');
+            const clearAllBtn = document.getElementById('clear_all_bill_files');
 
             if (fileInput) {
                 fileInput.addEventListener('change', function(e) {
-                    const file = e.target.files[0];
-                    if (file) {
-                        // Show file info
-                        fileName.textContent = file.name;
-                        fileSize.textContent = formatFileSize(file.size);
+                    const files = e.target.files;
+                    previewContainer.innerHTML = '';
+                    if (files && files.length > 0) {
                         previewContainer.classList.remove('hidden');
-
-                        // Show image preview if it's an image
-                        if (file.type.startsWith('image/')) {
-                            const reader = new FileReader();
-                            reader.onload = function(e) {
-                                previewImg.src = e.target.result;
-                                imagePreview.classList.remove('hidden');
-                            };
-                            reader.readAsDataURL(file);
-                        } else {
-                            imagePreview.classList.add('hidden');
+                        if (clearAllBtn) clearAllBtn.classList.remove('hidden');
+                        for (let i = 0; i < files.length; i++) {
+                            const file = files[i];
+                            const item = document.createElement('div');
+                            item.className = 'flex items-center gap-2 p-3 bg-accent/60 rounded-lg border border-border';
+                            let thumb = '';
+                            if (file.type.startsWith('image/')) {
+                                const reader = new FileReader();
+                                reader.onload = function(ev) {
+                                    const img = item.querySelector('.bill-thumb');
+                                    if (img) img.src = ev.target.result;
+                                };
+                                reader.readAsDataURL(file);
+                                thumb = '<img class="bill-thumb w-12 h-12 object-cover rounded border border-border shrink-0" src="" alt="">';
+                            } else {
+                                thumb = '<span class="w-12 h-12 flex items-center justify-center shrink-0"><i class="ki-filled ki-file text-primary text-2xl"></i></span>';
+                            }
+                            item.innerHTML = thumb + '<div class="flex flex-col grow min-w-0"><span class="text-sm font-semibold text-mono truncate">' + escapeHtml(file.name) + '</span><span class="text-xs text-secondary-foreground">' + formatFileSize(file.size) + '</span></div>';
+                            previewContainer.appendChild(item);
                         }
+                    } else {
+                        previewContainer.classList.add('hidden');
+                        if (clearAllBtn) clearAllBtn.classList.add('hidden');
                     }
                 });
             }
@@ -2228,52 +2164,71 @@ Ngày mua: 18:54:15 19/01/2026</pre>
         });
 
         function parseMemberData(text) {
-            if (!text || !text.trim()) {
-                return null;
+            if (!text || !text.trim()) return null;
+            const t = text.trim();
+
+            // Dạng JSON: {"order_code":"863470","product_name":"...","email":"...","region":"...","purchase_date":"..."}
+            if (t.startsWith('{')) {
+                try {
+                    const parsed = JSON.parse(t);
+                    if (parsed && typeof parsed === 'object') {
+                        const result = {};
+                        ['order_code', 'product_name', 'email', 'region', 'purchase_date'].forEach(function(k) {
+                            if (parsed[k] !== undefined && parsed[k] !== null && parsed[k] !== '') {
+                                result[k] = String(parsed[k]);
+                            }
+                        });
+                        if (Object.keys(result).length > 0) return result;
+                    }
+                } catch (e) {
+                    /* fall through to key:value */
+                }
             }
 
-            const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+            // Dạng "Key: Value" từng dòng (Mã đơn hàng / mã_đh, Tên sản phẩm / sản_phẩm, ...)
+            const lines = t.split('\n').map(function(line) {
+                return line.trim();
+            }).filter(function(line) {
+                return line;
+            });
             const data = {};
-
+            const keyMap = {
+                'Mã đơn hàng': 'order_code',
+                'mã_đh': 'order_code',
+                'Tên sản phẩm': 'product_name',
+                'sản_phẩm': 'product_name',
+                'Email': 'email',
+                'Khu vực bạn sống': 'region',
+                'Ngày mua': 'purchase_date'
+            };
             lines.forEach(function(line) {
-                // Parse format: "Key: Value"
                 const colonIndex = line.indexOf(':');
                 if (colonIndex > 0) {
                     const key = line.substring(0, colonIndex).trim();
                     const value = line.substring(colonIndex + 1).trim();
-
-                    // Map Vietnamese keys to English keys
-                    const keyMap = {
-                        'Mã đơn hàng': 'order_code',
-                        'Tên sản phẩm': 'product_name',
-                        'Email': 'email',
-                        'Khu vực bạn sống': 'region',
-                        'Ngày mua': 'purchase_date'
-                    };
-
                     const englishKey = keyMap[key] || key.toLowerCase().replace(/\s+/g, '_');
                     data[englishKey] = value;
                 }
             });
-
-            // Return null if no data was parsed
             return Object.keys(data).length > 0 ? data : null;
         }
 
         function clearFilePreview() {
             const fileInput = document.getElementById('bill_payment_file');
             const previewContainer = document.getElementById('bill_payment_preview');
-            const imagePreview = document.getElementById('image_preview');
-
-            if (fileInput) {
-                fileInput.value = '';
-            }
+            const clearAllBtn = document.getElementById('clear_all_bill_files');
+            if (fileInput) fileInput.value = '';
             if (previewContainer) {
+                previewContainer.innerHTML = '';
                 previewContainer.classList.add('hidden');
             }
-            if (imagePreview) {
-                imagePreview.classList.add('hidden');
-            }
+            if (clearAllBtn) clearAllBtn.classList.add('hidden');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         function formatFileSize(bytes) {
