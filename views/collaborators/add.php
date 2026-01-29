@@ -61,7 +61,7 @@
     }
 </style>
 
-<body class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-sidebar-fixed kt-header-fixed">
+<body class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-header-fixed" style="background: ghostwhite;">
     <!-- Theme Mode -->
     <script>
         const defaultThemeMode = 'light'; // light|dark|system
@@ -91,289 +91,160 @@
     <!-- End of Theme Mode -->
     <!-- Page -->
     <!-- Main -->
-    <div class="flex grow">
-        <!-- Sidebar -->
-        <div class="kt-sidebar bg-background border-e border-e-border fixed top-0 bottom-0 z-20 hidden lg:flex flex-col items-stretch shrink-0 [--kt-drawer-enable:true] lg:[--kt-drawer-enable:false]"
-            data-kt-drawer="true" data-kt-drawer-class="kt-drawer kt-drawer-start top-0 bottom-0"
-            id="sidebar">
-            <div class="kt-sidebar-header hidden lg:flex items-center relative justify-between px-3 lg:px-6 shrink-0"
-                id="sidebar_header">
-                <a class="dark:hidden" href="index.html">
-                    <img class="default-logo min-h-[22px] max-w-none"
-                        src="uploads/Logo.png" style="width: 220px" alt="Muakey" />
-                    <img class="small-logo min-h-[18px] max-w-none" style="width : 29px"
-                        src="https://muakey.com/favicon.ico" />
+    <div class="flex grow flex-col min-h-full">
+        <!-- Nav bar -->
+        <nav class="bg-background border-b border-border shrink-0 z-30">
+            <div class="flex items-center justify-between gap-4 px-4 lg:px-6 h-14">
+                <a href="/" class="flex items-center gap-2 shrink-0">
+                    <img class="h-8 w-auto dark:hidden" src="uploads/Logo.png" alt="Muakey" style="max-height: 32px; max-width: 180px;" />
+                    <img class="h-8 w-auto hidden dark:block" src="uploads/Logo.png" alt="Muakey" style="max-height: 32px; max-width: 180px;" />
                 </a>
-                <a class="hidden dark:block" href="index.html">
-                    <img class="default-logo min-h-[22px] max-w-none"
-                        src="uploads/Logo.png" style="width: 220px" alt="Muakey" />
-                    <img class="small-logo min-h-[18px] max-w-none" style="width : 29px"
-                        src="https://muakey.com/favicon.ico" />
-                </a>
-            </div>
-            <div class="kt-sidebar-content flex grow shrink-0 py-5 pe-2" id="sidebar_content">
-                <div class="kt-scrollable-y-hover grow shrink-0 flex ps-2 lg:ps-5 pe-1 lg:pe-3"
-                    data-kt-scrollable="true" data-kt-scrollable-dependencies="#sidebar_header"
-                    data-kt-scrollable-height="auto" data-kt-scrollable-offset="0px"
-                    data-kt-scrollable-wrappers="#sidebar_content" id="sidebar_scrollable">
-                    <!-- Sidebar Menu -->
-                    <div class="kt-menu flex flex-col grow gap-1" data-kt-menu="true"
-                        data-kt-menu-accordion-expand-all="false" id="sidebar_menu">
-                        <div class="kt-menu-item here" data-kt-menu-item-toggle="accordion"
-                            data-kt-menu-item-trigger="click">
-                            <div class="kt-menu-link flex items-center grow cursor-pointer border border-transparent gap-[10px] ps-[10px] pe-[10px] py-[6px]"
-                                tabindex="0">
-                                <span
-                                    class="kt-menu-icon items-start text-muted-foreground w-[20px]">
-                                    <i class="ki-filled ki-element-11 text-lg">
-                                    </i>
-                                </span>
-                                <span
-                                    class="kt-menu-title text-sm font-medium text-foreground kt-menu-item-active:text-primary kt-menu-link-hover:!text-primary">
-                                    Quản lí family-youtube
-                                </span>
-                                <span
-                                    class="kt-menu-arrow text-muted-foreground w-[20px] shrink-0 justify-end ms-1 me-[-10px]">
-                                    <span
-                                        class="inline-flex kt-menu-item-show:hidden">
-                                        <i
-                                            class="ki-filled ki-plus text-[11px]">
-                                        </i>
-                                    </span>
-                                    <span
-                                        class="hidden kt-menu-item-show:inline-flex">
-                                        <i
-                                            class="ki-filled ki-minus text-[11px]">
-                                        </i>
-                                    </span>
-                                </span>
-                            </div>
-                            <div
-                                class="kt-menu-accordion gap-1 ps-[10px] relative before:absolute before:start-[20px] before:top-0 before:bottom-0 before:border-s before:border-border">
-                                <div class="kt-menu-item">
-                                    <a class="kt-menu-link border border-transparent items-center grow kt-menu-item-active:bg-accent/60 dark:menu-item-active:border-border kt-menu-item-active:rounded-lg hover:bg-accent/60 hover:rounded-lg gap-[14px] ps-[10px] pe-[10px] py-[8px]"
-                                        href="/" tabindex="0">
-                                        <span
-                                            class="kt-menu-bullet flex w-[6px] -start-[3px] rtl:start-0 relative before:absolute before:top-0 before:size-[6px] before:rounded-full rtl:before:translate-x-1/2 before:-translate-y-1/2 kt-menu-item-active:before:bg-primary kt-menu-item-hover:before:bg-primary">
-                                        </span>
-                                        <span
-                                            class="kt-menu-title text-2sm font-normal text-foreground kt-menu-item-active:text-primary kt-menu-item-active:font-semibold kt-menu-link-hover:!text-primary">
-                                            Danh sách family
-                                        </span>
-                                    </a>
-                                </div>
-                                <div class="kt-menu-item">
-                                    <a class="kt-menu-link border border-transparent items-center grow kt-menu-item-active:bg-accent/60 dark:menu-item-active:border-border kt-menu-item-active:rounded-lg hover:bg-accent/60 hover:rounded-lg gap-[14px] ps-[10px] pe-[10px] py-[8px]"
-                                        href="?act=add-family"
-                                        tabindex="0">
-                                        <span
-                                            class="kt-menu-bullet flex w-[6px] -start-[3px] rtl:start-0 relative before:absolute before:top-0 before:size-[6px] before:rounded-full rtl:before:translate-x-1/2 before:-translate-y-1/2 kt-menu-item-active:before:bg-primary kt-menu-item-hover:before:bg-primary">
-                                        </span>
-                                        <span
-                                            class="kt-menu-title text-2sm font-normal text-foreground kt-menu-item-active:text-primary kt-menu-item-active:font-semibold kt-menu-link-hover:!text-primary">
-                                            Thêm family
-                                        </span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="kt-menu-item here show" data-kt-menu-item-toggle="accordion"
-                            data-kt-menu-item-trigger="click">
-                            <div class="kt-menu-link flex items-center grow cursor-pointer border border-transparent gap-[10px] ps-[10px] pe-[10px] py-[6px]"
-                                tabindex="0">
-                                <span
-                                    class="kt-menu-icon items-start text-muted-foreground w-[20px]">
-                                    <i class="ki-filled ki-setting-2 text-lg">
-                                    </i>
-                                </span>
-                                <span
-                                    class="kt-menu-title text-sm font-medium text-foreground kt-menu-item-active:text-primary kt-menu-link-hover:!text-primary">
-                                    Quản lí trang hướng dẫn
-                                </span>
-                                <span
-                                    class="kt-menu-arrow text-muted-foreground w-[20px] shrink-0 justify-end ms-1 me-[-10px]">
-                                    <span
-                                        class="inline-flex kt-menu-item-show:hidden">
-                                        <i
-                                            class="ki-filled ki-plus text-[11px]">
-                                        </i>
-                                    </span>
-                                    <span
-                                        class="hidden kt-menu-item-show:inline-flex">
-                                        <i
-                                            class="ki-filled ki-minus text-[11px]">
-                                        </i>
-                                    </span>
-                                </span>
-                            </div>
-                            <div class="kt-menu-accordion gap-1 ps-[10px] relative before:absolute before:start-[20px] before:top-0 before:bottom-0 before:border-s before:border-border">
-                                <div class="kt-menu-item">
-                                    <a class="kt-menu-link border border-transparent items-center grow kt-menu-item-active:bg-accent/60 dark:menu-item-active:border-border kt-menu-item-active:rounded-lg hover:bg-accent/60 hover:rounded-lg gap-[14px] ps-[10px] pe-[10px] py-[8px]"
-                                        href="?act=collaborators"
-                                        tabindex="0">
-                                        <span
-                                            class="kt-menu-bullet flex w-[6px] -start-[3px] rtl:start-0 relative before:absolute before:top-0 before:size-[6px] before:rounded-full rtl:before:translate-x-1/2 before:-translate-y-1/2 kt-menu-item-active:before:bg-primary kt-menu-item-hover:before:bg-primary">
-                                        </span>
-                                        <span
-                                            class="kt-menu-title text-2sm font-normal text-foreground kt-menu-item-active:text-primary kt-menu-item-active:font-semibold kt-menu-link-hover:!text-primary">
-                                            Danh sách
-                                        </span>
-                                    </a>
-                                </div>
-                                <div class="kt-menu-item active">
-                                    <a class="kt-menu-link border border-transparent items-center grow kt-menu-item-active:bg-accent/60 dark:menu-item-active:border-border kt-menu-item-active:rounded-lg hover:bg-accent/60 hover:rounded-lg gap-[14px] ps-[10px] pe-[10px] py-[8px]"
-                                        href="?act=collaborators&sub=add"
-                                        tabindex="0">
-                                        <span
-                                            class="kt-menu-bullet flex w-[6px] -start-[3px] rtl:start-0 relative before:absolute before:top-0 before:size-[6px] before:rounded-full rtl:before:translate-x-1/2 before:-translate-y-1/2 kt-menu-item-active:before:bg-primary kt-menu-item-hover:before:bg-primary">
-                                        </span>
-                                        <span
-                                            class="kt-menu-title text-2sm font-normal text-foreground kt-menu-item-active:text-primary kt-menu-item-active:font-semibold kt-menu-link-hover:!text-primary">
-                                            Thêm mới
-                                        </span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    <!-- End of Sidebar Menu -->
+                <div class="flex items-center gap-1">
+                    <a href="/" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary kt-menu-item-active:bg-accent/60 kt-menu-item-active:text-primary">
+                        <i class="ki-filled ki-element-11 text-lg"></i>
+                        Danh sách family
+                    </a>
+                    <a href="?act=add-family" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary">
+                        <i class="ki-filled ki-plus text-lg"></i>
+                        Thêm family
+                    </a>
+                    <span class="w-px h-5 bg-border mx-1" aria-hidden="true"></span>
+                    <a href="?act=collaborators" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary">
+                        <i class="ki-filled ki-setting-2 text-lg"></i>
+                        Danh sách hướng dẫn
+                    </a>
+                    <a href="?act=collaborators&sub=add" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary">
+                        <i class="ki-filled ki-plus text-lg"></i>
+                        Thêm form hướng dẫn
+                    </a>
                 </div>
             </div>
-        </div>
-        <!-- End of Sidebar -->
+        </nav>
         <!-- Wrapper -->
-        <div class="kt-wrapper flex grow flex-col">
-
+        <div class="kt-wrapper flex grow flex-col min-w-0">
             <!-- Content -->
-            <main class="grow pt-5" id="content" role="content">
-                <!-- Container -->
-
-                <div class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-sidebar-fixed kt-header-fixed">
-                    <!-- Include sidebar from index.php - I'll use a simplified version -->
-                    <!-- For now, creating a minimal working version -->
-                    <div class="kt-container-fixed">
-                        <div class="grid gap-5 lg:gap-7.5">
-                            <div class="grid">
-                                <div class="kt-card kt-card-grid h-full min-w-full">
-                                    <div class="kt-card-header">
-                                        <h3 class="kt-card-title">Thêm Collaborator Mới</h3>
-                                    </div>
-                                    <div class="kt-card-body">
-                                        <?php if (isset($_SESSION['errors']) && !empty($_SESSION['errors'])): ?>
-                                            <div class="mb-5 p-4 bg-destructive/10 border border-destructive rounded-lg">
-                                                <div class="flex items-start gap-2">
-                                                    <i class="ki-filled ki-information text-destructive text-lg mt-0.5"></i>
-                                                    <div class="flex flex-col gap-1">
-                                                        <h4 class="text-sm font-semibold text-destructive">Có lỗi xảy ra:</h4>
-                                                        <ul class="list-disc list-inside text-sm text-destructive space-y-1">
-                                                            <?php foreach ($_SESSION['errors'] as $error): ?>
-                                                                <li><?php echo htmlspecialchars($error); ?></li>
-                                                            <?php endforeach; ?>
-                                                        </ul>
-                                                    </div>
+            <main class="grow" id="content" role="content">
+                <div class="kt-container-fixed">
+                    <div class="grid gap-5 lg:gap-7.5">
+                        <div class="grid">
+                            <div class="kt-card kt-card-grid h-full min-w-full">
+                                <div class="kt-card-header">
+                                    <h3 class="kt-card-title">Thêm Collaborator Mới</h3>
+                                </div>
+                                <div class="kt-card-body">
+                                    <?php if (isset($_SESSION['errors']) && !empty($_SESSION['errors'])): ?>
+                                        <div class="mb-5 p-4 bg-destructive/10 border border-destructive rounded-lg">
+                                            <div class="flex items-start gap-2">
+                                                <i class="ki-filled ki-information text-destructive text-lg mt-0.5"></i>
+                                                <div class="flex flex-col gap-1">
+                                                    <h4 class="text-sm font-semibold text-destructive">Có lỗi xảy ra:</h4>
+                                                    <ul class="list-disc list-inside text-sm text-destructive space-y-1">
+                                                        <?php foreach ($_SESSION['errors'] as $error): ?>
+                                                            <li><?php echo htmlspecialchars($error); ?></li>
+                                                        <?php endforeach; ?>
+                                                    </ul>
                                                 </div>
                                             </div>
-                                            <?php unset($_SESSION['errors']); ?>
-                                        <?php endif; ?>
+                                        </div>
+                                        <?php unset($_SESSION['errors']); ?>
+                                    <?php endif; ?>
 
-                                        <form method="POST" action="/" id="add_collaborator_form" class="grid gap-5 lg:gap-7.5">
-                                            <input type="hidden" name="action" value="add-collaborator">
+                                    <form method="POST" action="/" id="add_collaborator_form" class="grid gap-5 lg:gap-7.5">
+                                        <input type="hidden" name="action" value="add-collaborator">
 
-                                            <div class="flex flex-col gap-2" style="padding: 10px;">
-                                                <label class="kt-form-label text-mono font-semibold text-sm">
-                                                    Nội dung <span class="text-destructive">*</span>
-                                                </label>
-                                                <textarea name="content" id="content_editor" style="visibility: hidden; position: absolute;"></textarea>
-                                            </div>
+                                        <div class="flex flex-col gap-2" style="padding: 10px;">
+                                            <label class="kt-form-label text-mono font-semibold text-sm">
+                                                Nội dung <span class="text-destructive">*</span>
+                                            </label>
+                                            <textarea name="content" id="content_editor" style="visibility: hidden; position: absolute;"></textarea>
+                                        </div>
 
-                                            <div class="flex flex-col gap-2" style="padding: 0 10px;">
-                                                <label class="kt-form-label text-mono font-semibold text-sm">
-                                                    Trạng thái <span class="text-destructive">*</span>
-                                                </label>
-                                                <select name="status" class="kt-select" data-kt-select="true">
-                                                    <option value="active" selected>Hoạt động</option>
-                                                    <option value="inactive" <?php echo (isset($_SESSION['old_data']['status']) && $_SESSION['old_data']['status'] === 'inactive') ? 'selected' : ''; ?>>Không hoạt động</option>
-                                                </select>
-                                            </div>
+                                        <div class="flex flex-col gap-2" style="padding: 0 10px;">
+                                            <label class="kt-form-label text-mono font-semibold text-sm">
+                                                Trạng thái <span class="text-destructive">*</span>
+                                            </label>
+                                            <select name="status" class="kt-select" data-kt-select="true">
+                                                <option value="active" selected>Hoạt động</option>
+                                                <option value="inactive" <?php echo (isset($_SESSION['old_data']['status']) && $_SESSION['old_data']['status'] === 'inactive') ? 'selected' : ''; ?>>Không hoạt động</option>
+                                            </select>
+                                        </div>
 
-                                            <div class="flex items-center gap-2.5 justify-end" style="padding: 0 10px 10px 10px;">
-                                                <a href="?act=collaborators" class="kt-btn kt-btn-outline">Hủy</a>
-                                                <button type="submit" class="kt-btn kt-btn-primary">Thêm mới</button>
-                                            </div>
-                                        </form>
-                                    </div>
+                                        <div class="flex items-center gap-2.5 justify-end" style="padding: 0 10px 10px 10px;">
+                                            <a href="?act=collaborators" class="kt-btn kt-btn-outline">Hủy</a>
+                                            <button type="submit" class="kt-btn kt-btn-primary">Thêm mới</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <script src="../dist/assets/js/core.bundle.js"></script>
-                    <script src="../dist/assets/vendors/ktui/ktui.min.js"></script>
-                    <script>
-                        // Initialize CKEditor
-                        ClassicEditor
-                            .create(document.querySelector('#content_editor'), {
-                                toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'blockQuote', 'insertTable', '|', 'undo', 'redo']
-                            })
-                            .then(editor => {
-                                window.editor = editor;
-                            })
-                            .catch(error => {
-                                console.error('Error initializing CKEditor:', error);
-                            });
-
-                        // Form validation and submit handler
-                        document.getElementById('add_collaborator_form').addEventListener('submit', function(e) {
-                            let isValid = true;
-                            let errorMessage = '';
-
-                            // Validate CKEditor content
-                            if (window.editor) {
-                                const editorData = window.editor.getData();
-                                const textContent = editorData.replace(/<[^>]*>/g, '').trim();
-
-                                if (!textContent) {
-                                    isValid = false;
-                                    errorMessage = 'Vui lòng nhập nội dung';
-                                } else {
-                                    // Update hidden textarea with editor content
-                                    document.getElementById('content_editor').value = editorData;
-                                }
-                            } else {
-                                // Fallback if editor not initialized
-                                const textarea = document.getElementById('content_editor');
-                                if (!textarea.value.trim()) {
-                                    isValid = false;
-                                    errorMessage = 'Vui lòng nhập nội dung';
-                                }
-                            }
-
-                            // Validate status
-                            const statusSelect = document.querySelector('select[name="status"]');
-                            if (!statusSelect || !statusSelect.value) {
-                                isValid = false;
-                                if (errorMessage) {
-                                    errorMessage += ' và chọn trạng thái';
-                                } else {
-                                    errorMessage = 'Vui lòng chọn trạng thái';
-                                }
-                            }
-
-                            if (!isValid) {
-                                e.preventDefault();
-                                alert(errorMessage);
-                                return false;
-                            }
-                        });
-                    </script>
                 </div>
-                <!-- End of Container -->
-            </main>
-            <!-- End of Content -->
+
+                <script src="../dist/assets/js/core.bundle.js"></script>
+                <script src="../dist/assets/vendors/ktui/ktui.min.js"></script>
+                <script>
+                    // Initialize CKEditor
+                    ClassicEditor
+                        .create(document.querySelector('#content_editor'), {
+                            toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'blockQuote', 'insertTable', '|', 'undo', 'redo']
+                        })
+                        .then(editor => {
+                            window.editor = editor;
+                        })
+                        .catch(error => {
+                            console.error('Error initializing CKEditor:', error);
+                        });
+
+                    // Form validation and submit handler
+                    document.getElementById('add_collaborator_form').addEventListener('submit', function(e) {
+                        let isValid = true;
+                        let errorMessage = '';
+
+                        // Validate CKEditor content
+                        if (window.editor) {
+                            const editorData = window.editor.getData();
+                            const textContent = editorData.replace(/<[^>]*>/g, '').trim();
+
+                            if (!textContent) {
+                                isValid = false;
+                                errorMessage = 'Vui lòng nhập nội dung';
+                            } else {
+                                // Update hidden textarea with editor content
+                                document.getElementById('content_editor').value = editorData;
+                            }
+                        } else {
+                            // Fallback if editor not initialized
+                            const textarea = document.getElementById('content_editor');
+                            if (!textarea.value.trim()) {
+                                isValid = false;
+                                errorMessage = 'Vui lòng nhập nội dung';
+                            }
+                        }
+
+                        // Validate status
+                        const statusSelect = document.querySelector('select[name="status"]');
+                        if (!statusSelect || !statusSelect.value) {
+                            isValid = false;
+                            if (errorMessage) {
+                                errorMessage += ' và chọn trạng thái';
+                            } else {
+                                errorMessage = 'Vui lòng chọn trạng thái';
+                            }
+                        }
+
+                        if (!isValid) {
+                            e.preventDefault();
+                            alert(errorMessage);
+                            return false;
+                        }
+                    });
+                </script>
         </div>
-        <!-- End of Wrapper -->
+        <!-- End of Container -->
+        </main>
+        <!-- End of Content -->
+    </div>
+    <!-- End of Wrapper -->
     </div>
     <!-- End of Main -->
     <div class="kt-modal" data-kt-modal="true" id="search_modal">

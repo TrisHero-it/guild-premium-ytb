@@ -53,7 +53,7 @@
     </script>
 </head>
 
-<body class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-sidebar-fixed kt-header-fixed">
+<body class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-header-fixed" style="background: ghostwhite;">
     <!-- Theme Mode -->
     <script>
         const defaultThemeMode = 'light'; // light|dark|system
@@ -83,165 +83,40 @@
     <!-- End of Theme Mode -->
     <!-- Page -->
     <!-- Main -->
-    <div class="flex grow">
-        <!-- Sidebar -->
-        <div class="kt-sidebar bg-background border-e border-e-border fixed top-0 bottom-0 z-20 hidden lg:flex flex-col items-stretch shrink-0 [--kt-drawer-enable:true] lg:[--kt-drawer-enable:false]"
-            data-kt-drawer="true" data-kt-drawer-class="kt-drawer kt-drawer-start top-0 bottom-0"
-            id="sidebar">
-            <div class="kt-sidebar-header hidden lg:flex items-center relative justify-between px-3 lg:px-6 shrink-0"
-                id="sidebar_header">
-                <a class="dark:hidden" href="index.html">
-                    <img class="default-logo min-h-[22px] max-w-none"
-                        src="uploads/Logo.png" style="width: 220px" alt="Muakey" />
-                    <img class="small-logo min-h-[18px] max-w-none" style="width : 29px"
-                        src="https://muakey.com/favicon.ico" />
-                </a>
-                <a class="hidden dark:block" href="index.html">
-                    <img class="default-logo min-h-[22px] max-w-none"
-                        src="" alt="Muakey" />
-                    <img class="small-logo min-h-[18px] max-w-none" style="width : 29px"
-                        src="https://muakey.com/favicon.ico" />
-                </a>
-
-            </div>
-            <div class="kt-sidebar-content flex grow shrink-0 py-5 pe-2" id="sidebar_content">
-                <div class="kt-scrollable-y-hover grow shrink-0 flex ps-2 lg:ps-5 pe-1 lg:pe-3"
-                    data-kt-scrollable="true" data-kt-scrollable-dependencies="#sidebar_header"
-                    data-kt-scrollable-height="auto" data-kt-scrollable-offset="0px"
-                    data-kt-scrollable-wrappers="#sidebar_content" id="sidebar_scrollable">
-                    <!-- Sidebar Menu -->
-                    <div class="kt-menu flex flex-col grow gap-1" data-kt-menu="true"
-                        data-kt-menu-accordion-expand-all="false" id="sidebar_menu">
-                        <div class="kt-menu-item here show" data-kt-menu-item-toggle="accordion"
-                            data-kt-menu-item-trigger="click">
-                            <div class="kt-menu-link flex items-center grow cursor-pointer border border-transparent gap-[10px] ps-[10px] pe-[10px] py-[6px]"
-                                tabindex="0">
-                                <span
-                                    class="kt-menu-icon items-start text-muted-foreground w-[20px]">
-                                    <i class="ki-filled ki-element-11 text-lg">
-                                    </i>
-                                </span>
-                                <span
-                                    class="kt-menu-title text-sm font-medium text-foreground kt-menu-item-active:text-primary kt-menu-link-hover:!text-primary">
-                                    Quản lí family-youtube
-                                </span>
-                                <span
-                                    class="kt-menu-arrow text-muted-foreground w-[20px] shrink-0 justify-end ms-1 me-[-10px]">
-                                    <span
-                                        class="inline-flex kt-menu-item-show:hidden">
-                                        <i
-                                            class="ki-filled ki-plus text-[11px]">
-                                        </i>
-                                    </span>
-                                    <span
-                                        class="hidden kt-menu-item-show:inline-flex">
-                                        <i
-                                            class="ki-filled ki-minus text-[11px]">
-                                        </i>
-                                    </span>
-                                </span>
-                            </div>
-                            <div
-                                class="kt-menu-accordion gap-1 ps-[10px] relative before:absolute before:start-[20px] before:top-0 before:bottom-0 before:border-s before:border-border">
-                                <div class="kt-menu-item">
-                                    <a class="kt-menu-link border border-transparent items-center grow kt-menu-item-active:bg-accent/60 dark:menu-item-active:border-border kt-menu-item-active:rounded-lg hover:bg-accent/60 hover:rounded-lg gap-[14px] ps-[10px] pe-[10px] py-[8px]"
-                                        href="/" tabindex="0">
-                                        <span
-                                            class="kt-menu-bullet flex w-[6px] -start-[3px] rtl:start-0 relative before:absolute before:top-0 before:size-[6px] before:rounded-full rtl:before:translate-x-1/2 before:-translate-y-1/2 kt-menu-item-active:before:bg-primary kt-menu-item-hover:before:bg-primary">
-                                        </span>
-                                        <span
-                                            class="kt-menu-title text-2sm font-normal text-foreground kt-menu-item-active:text-primary kt-menu-item-active:font-semibold kt-menu-link-hover:!text-primary">
-                                            Danh sách family
-                                        </span>
-                                    </a>
+    <div class="flex grow flex-col min-h-full">
+        <!-- Nav bar -->
+        <nav class="bg-background border-b border-border shrink-0 z-30">
+                        <div class="flex items-center justify-between gap-4 px-4 lg:px-6 h-14">
+                                <a href="/" class="flex items-center gap-2 shrink-0">
+                                        <img class="h-8 w-auto dark:hidden" src="uploads/Logo.png" alt="Muakey" style="max-height: 32px; max-width: 180px;" />
+                                        <img class="h-8 w-auto hidden dark:block" src="uploads/Logo.png" alt="Muakey" style="max-height: 32px; max-width: 180px;" />
+                                </a>
+                                <div class="flex items-center gap-1">
+                                        <a href="/" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary kt-menu-item-active:bg-accent/60 kt-menu-item-active:text-primary">
+                                                <i class="ki-filled ki-element-11 text-lg"></i>
+                                                Danh sách family
+                                        </a>
+                                        <a href="?act=add-family" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary">
+                                                <i class="ki-filled ki-plus text-lg"></i>
+                                                Thêm family
+                                        </a>
+                                        <span class="w-px h-5 bg-border mx-1" aria-hidden="true"></span>
+                                        <a href="?act=collaborators" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary">
+                                                <i class="ki-filled ki-setting-2 text-lg"></i>
+                                                Danh sách hướng dẫn
+                                        </a>
+                                        <a href="?act=collaborators&sub=add" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary">
+                                                <i class="ki-filled ki-plus text-lg"></i>
+                                                Thêm form hướng dẫn
+                                        </a>
                                 </div>
-                                <div class="kt-menu-item active">
-                                    <a class="kt-menu-link border border-transparent items-center grow kt-menu-item-active:bg-accent/60 dark:menu-item-active:border-border kt-menu-item-active:rounded-lg hover:bg-accent/60 hover:rounded-lg gap-[14px] ps-[10px] pe-[10px] py-[8px]"
-                                        href="?act=add-family"
-                                        tabindex="0">
-                                        <span
-                                            class="kt-menu-bullet flex w-[6px] -start-[3px] rtl:start-0 relative before:absolute before:top-0 before:size-[6px] before:rounded-full rtl:before:translate-x-1/2 before:-translate-y-1/2 kt-menu-item-active:before:bg-primary kt-menu-item-hover:before:bg-primary">
-                                        </span>
-                                        <span
-                                            class="kt-menu-title text-2sm font-normal text-foreground kt-menu-item-active:text-primary kt-menu-item-active:font-semibold kt-menu-link-hover:!text-primary">
-                                            Thêm family
-                                        </span>
-                                    </a>
-                                </div>
-                            </div>
                         </div>
-
-                        <div class="kt-menu-item" data-kt-menu-item-toggle="accordion"
-                            data-kt-menu-item-trigger="click">
-                            <div class="kt-menu-link flex items-center grow cursor-pointer border border-transparent gap-[10px] ps-[10px] pe-[10px] py-[6px]"
-                                tabindex="0">
-                                <span
-                                    class="kt-menu-icon items-start text-muted-foreground w-[20px]">
-                                    <i class="ki-filled ki-setting-2 text-lg">
-                                    </i>
-                                </span>
-                                <span
-                                    class="kt-menu-title text-sm font-medium text-foreground kt-menu-item-active:text-primary kt-menu-link-hover:!text-primary">
-                                    Quản lí trang hướng dẫn
-                                </span>
-                                <span
-                                    class="kt-menu-arrow text-muted-foreground w-[20px] shrink-0 justify-end ms-1 me-[-10px]">
-                                    <span
-                                        class="inline-flex kt-menu-item-show:hidden">
-                                        <i
-                                            class="ki-filled ki-plus text-[11px]">
-                                        </i>
-                                    </span>
-                                    <span
-                                        class="hidden kt-menu-item-show:inline-flex">
-                                        <i
-                                            class="ki-filled ki-minus text-[11px]">
-                                        </i>
-                                    </span>
-                                </span>
-                            </div>
-                            <div
-                                class="kt-menu-accordion gap-1 ps-[10px] relative before:absolute before:start-[20px] before:top-0 before:bottom-0 before:border-s before:border-border">
-                                <div class="kt-menu-item">
-                                    <a class="kt-menu-link border border-transparent items-center grow kt-menu-item-active:bg-accent/60 dark:menu-item-active:border-border kt-menu-item-active:rounded-lg hover:bg-accent/60 hover:rounded-lg gap-[14px] ps-[10px] pe-[10px] py-[8px]"
-                                        href="?act=collaborators"
-                                        tabindex="0">
-                                        <span
-                                            class="kt-menu-bullet flex w-[6px] -start-[3px] rtl:start-0 relative before:absolute before:top-0 before:size-[6px] before:rounded-full rtl:before:translate-x-1/2 before:-translate-y-1/2 kt-menu-item-active:before:bg-primary kt-menu-item-hover:before:bg-primary">
-                                        </span>
-                                        <span
-                                            class="kt-menu-title text-2sm font-normal text-foreground kt-menu-item-active:text-primary kt-menu-item-active:font-semibold kt-menu-link-hover:!text-primary">
-                                            Danh sách
-                                        </span>
-                                    </a>
-                                </div>
-                                <div class="kt-menu-item">
-                                    <a class="kt-menu-link border border-transparent items-center grow kt-menu-item-active:bg-accent/60 dark:menu-item-active:border-border kt-menu-item-active:rounded-lg hover:bg-accent/60 hover:rounded-lg gap-[14px] ps-[10px] pe-[10px] py-[8px]"
-                                        href="?act=collaborators&sub=add"
-                                        tabindex="0">
-                                        <span
-                                            class="kt-menu-bullet flex w-[6px] -start-[3px] rtl:start-0 relative before:absolute before:top-0 before:size-[6px] before:rounded-full rtl:before:translate-x-1/2 before:-translate-y-1/2 kt-menu-item-active:before:bg-primary kt-menu-item-hover:before:bg-primary">
-                                        </span>
-                                        <span
-                                            class="kt-menu-title text-2sm font-normal text-foreground kt-menu-item-active:text-primary kt-menu-item-active:font-semibold kt-menu-link-hover:!text-primary">
-                                            Thêm mới
-                                        </span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    <!-- End of Sidebar Menu -->
-                </div>
-            </div>
-        </div>
-        <!-- End of Sidebar -->
+                </nav>
         <!-- Wrapper -->
-        <div class="kt-wrapper flex grow flex-col">
+        <div class="kt-wrapper flex grow flex-col min-w-0">
 
             <!-- Content -->
-            <main class="grow pt-5" id="content" role="content">
+            <main class="grow " id="content" role="content">
                 <!-- Container -->
                 <div class="kt-container-fixed" id="contentContainer">
                 </div>
@@ -318,14 +193,13 @@
                                         return $memberData;
                                     }
 
-                                    // Helper function to format datetime for input
+                                    // Helper function to format date for input (chỉ ngày, không giờ)
                                     function formatDateTimeForInput($datetime)
                                     {
                                         if (empty($datetime)) {
                                             return '';
                                         }
-                                        // Convert MySQL datetime to datetime-local format
-                                        return date('Y-m-d\TH:i', strtotime($datetime));
+                                        return date('Y-m-d', strtotime($datetime));
                                     }
 
                                     // Get old data from session if exists (for validation errors)
@@ -347,6 +221,12 @@
                                     if (!empty($billPaymentValue)) {
                                         $dec = json_decode($billPaymentValue, true);
                                         $billPaymentFiles = is_array($dec) ? $dec : [$billPaymentValue];
+                                    }
+                                    $billOfMasterValue = $family['bill_of_master'] ?? '';
+                                    $billOfMasterFiles = [];
+                                    if (!empty($billOfMasterValue)) {
+                                        $decMaster = json_decode($billOfMasterValue, true);
+                                        $billOfMasterFiles = is_array($decMaster) ? $decMaster : [$billOfMasterValue];
                                     }
                                     ?>
                                     <form method="POST" action="/" id="edit_family_form" enctype="multipart/form-data" class="grid gap-5 lg:gap-7.5">
@@ -456,7 +336,7 @@
                                                 </label>
                                                 <label class="kt-input">
                                                     <i class="ki-filled ki-calendar"></i>
-                                                    <input type="datetime-local" name="payment_at" value="<?php echo htmlspecialchars($paymentAtValue); ?>">
+                                                    <input type="date" name="payment_at" value="<?php echo htmlspecialchars($paymentAtValue); ?>">
                                                 </label>
                                             </div>
                                             <div class="flex flex-col gap-2">
@@ -465,7 +345,7 @@
                                                 </label>
                                                 <label class="kt-input">
                                                     <i class="ki-filled ki-calendar-tick"></i>
-                                                    <input type="datetime-local" name="pay_due_date" value="<?php echo htmlspecialchars($payDueDateValue); ?>" required>
+                                                    <input type="date" name="pay_due_date" value="<?php echo htmlspecialchars($payDueDateValue); ?>" required>
                                                 </label>
                                             </div>
                                         </div>
@@ -519,6 +399,44 @@
                                                     <!-- Danh sách file mới chọn sẽ được thêm vào đây bằng JS -->
                                                 </div>
                                                 <button type="button" id="clear_all_bill_files" class="kt-btn kt-btn-sm kt-btn-ghost hidden mt-1" onclick="clearFilePreview()">Xóa tất cả file mới chọn</button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Row 6b: Bill of Master -->
+                                        <div class="flex flex-col gap-2" style="padding: 0 10px;">
+                                            <label class="kt-form-label text-mono font-semibold text-sm">
+                                                Hóa đơn chủ fam (bill of master)
+                                            </label>
+                                            <div class="flex flex-col gap-2">
+                                                <label class="kt-input">
+                                                    <i class="ki-filled ki-document"></i>
+                                                    <input type="file" name="bill_of_master[]" accept="image/*,.pdf,.doc,.docx" id="bill_of_master_file" multiple>
+                                                </label>
+                                                <p class="text-xs text-muted-foreground">Có thể chọn nhiều ảnh/file. Chọn file mới sẽ thêm vào file hiện tại. Tối đa 10MB/file.</p>
+                                                <?php if (!empty($billOfMasterFiles)): ?>
+                                                    <div class="mt-2">
+                                                        <span class="text-xs font-medium text-muted-foreground block mb-2">File hiện tại (<?php echo count($billOfMasterFiles); ?>):</span>
+                                                        <div class="flex flex-wrap gap-2">
+                                                            <?php foreach ($billOfMasterFiles as $f): ?>
+                                                                <div class="flex items-center gap-2 p-3 bg-accent/60 rounded-lg border border-border max-w-full">
+                                                                    <?php if (preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $f)): ?>
+                                                                        <img src="../uploads/bills/<?php echo htmlspecialchars($f); ?>" alt="" class="w-12 h-12 object-cover rounded border border-border shrink-0">
+                                                                    <?php else: ?>
+                                                                        <span class="w-12 h-12 flex items-center justify-center shrink-0"><i class="ki-filled ki-file text-primary text-2xl"></i></span>
+                                                                    <?php endif; ?>
+                                                                    <div class="flex flex-col min-w-0">
+                                                                        <span class="text-sm font-semibold text-mono truncate"><?php echo htmlspecialchars($f); ?></span>
+                                                                        <a href="../uploads/bills/<?php echo htmlspecialchars($f); ?>" target="_blank" rel="noopener" class="text-xs text-primary hover:underline">Xem / Tải</a>
+                                                                    </div>
+                                                                </div>
+                                                            <?php endforeach; ?>
+                                                        </div>
+                                                    </div>
+                                                <?php endif; ?>
+                                                <div id="bill_of_master_preview" class="hidden mt-2 flex flex-col gap-2">
+                                                    <!-- Danh sách file mới chọn sẽ được thêm vào đây bằng JS -->
+                                                </div>
+                                                <button type="button" id="clear_all_bill_master_files" class="kt-btn kt-btn-sm kt-btn-ghost hidden mt-1" onclick="clearBillOfMasterPreview()">Xóa tất cả file mới chọn</button>
                                             </div>
                                         </div>
 
@@ -2265,6 +2183,43 @@
                 });
             }
 
+            // Bill of master file preview
+            const masterFileInput = document.getElementById('bill_of_master_file');
+            const masterPreviewContainer = document.getElementById('bill_of_master_preview');
+            const clearAllMasterBtn = document.getElementById('clear_all_bill_master_files');
+            if (masterFileInput) {
+                masterFileInput.addEventListener('change', function(e) {
+                    const files = e.target.files;
+                    masterPreviewContainer.innerHTML = '';
+                    if (files && files.length > 0) {
+                        masterPreviewContainer.classList.remove('hidden');
+                        if (clearAllMasterBtn) clearAllMasterBtn.classList.remove('hidden');
+                        for (let i = 0; i < files.length; i++) {
+                            const file = files[i];
+                            const item = document.createElement('div');
+                            item.className = 'flex items-center gap-2 p-3 bg-accent/60 rounded-lg border border-border';
+                            let thumb = '';
+                            if (file.type.startsWith('image/')) {
+                                const reader = new FileReader();
+                                reader.onload = function(ev) {
+                                    const img = item.querySelector('.bill-master-thumb');
+                                    if (img) img.src = ev.target.result;
+                                };
+                                reader.readAsDataURL(file);
+                                thumb = '<img class="bill-master-thumb w-12 h-12 object-cover rounded border border-border shrink-0" src="" alt="">';
+                            } else {
+                                thumb = '<span class="w-12 h-12 flex items-center justify-center shrink-0"><i class="ki-filled ki-file text-primary text-2xl"></i></span>';
+                            }
+                            item.innerHTML = thumb + '<div class="flex flex-col grow min-w-0"><span class="text-sm font-semibold text-mono truncate">' + escapeHtml(file.name) + '</span><span class="text-xs text-secondary-foreground">' + formatFileSize(file.size) + '</span></div>';
+                            masterPreviewContainer.appendChild(item);
+                        }
+                    } else {
+                        masterPreviewContainer.classList.add('hidden');
+                        if (clearAllMasterBtn) clearAllMasterBtn.classList.add('hidden');
+                    }
+                });
+            }
+
             // Parse member data before form submit
             const form = document.getElementById('edit_family_form');
             if (form) {
@@ -2336,6 +2291,18 @@
             const fileInput = document.getElementById('bill_payment_file');
             const previewContainer = document.getElementById('bill_payment_preview');
             const clearAllBtn = document.getElementById('clear_all_bill_files');
+            if (fileInput) fileInput.value = '';
+            if (previewContainer) {
+                previewContainer.innerHTML = '';
+                previewContainer.classList.add('hidden');
+            }
+            if (clearAllBtn) clearAllBtn.classList.add('hidden');
+        }
+
+        function clearBillOfMasterPreview() {
+            const fileInput = document.getElementById('bill_of_master_file');
+            const previewContainer = document.getElementById('bill_of_master_preview');
+            const clearAllBtn = document.getElementById('clear_all_bill_master_files');
             if (fileInput) fileInput.value = '';
             if (previewContainer) {
                 previewContainer.innerHTML = '';

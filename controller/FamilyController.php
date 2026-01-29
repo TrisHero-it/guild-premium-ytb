@@ -84,6 +84,41 @@ class FamilyController
             }
         }
 
+        // Xử lý upload nhiều file hóa đơn chủ fam (bill_of_master)
+        $bill_of_master = null;
+        if (!empty($_FILES['bill_of_master']['name'])) {
+            $names = $_FILES['bill_of_master']['name'];
+            $uploaded = [];
+            if (is_array($names)) {
+                for ($i = 0; $i < count($names); $i++) {
+                    $file = [
+                        'name' => $_FILES['bill_of_master']['name'][$i],
+                        'type' => $_FILES['bill_of_master']['type'][$i],
+                        'tmp_name' => $_FILES['bill_of_master']['tmp_name'][$i],
+                        'error' => $_FILES['bill_of_master']['error'][$i],
+                        'size' => $_FILES['bill_of_master']['size'][$i]
+                    ];
+                    if ($file['error'] === UPLOAD_ERR_OK) {
+                        $fileName = $this->handleFileUpload($file);
+                        if ($fileName) {
+                            $uploaded[] = $fileName;
+                        }
+                    }
+                }
+            } else {
+                $file = $_FILES['bill_of_master'];
+                if ($file['error'] === UPLOAD_ERR_OK) {
+                    $fileName = $this->handleFileUpload($file);
+                    if ($fileName) {
+                        $uploaded[] = $fileName;
+                    }
+                }
+            }
+            if (!empty($uploaded)) {
+                $bill_of_master = json_encode($uploaded, JSON_UNESCAPED_UNICODE);
+            }
+        }
+
         // Validation
         $errors = [];
         if (empty($form)) {
@@ -128,6 +163,7 @@ class FamilyController
                 'name_bank' => $name_bank,
                 'user' => $user,
                 'bill_payment' => $bill_payment,
+                'bill_of_master' => $bill_of_master,
                 'status' => $status,
                 'pay_due_date' => $pay_due_date,
                 'note' => $note,
@@ -346,6 +382,50 @@ class FamilyController
             $bill_payment = !empty($existingFiles) ? json_encode($existingFiles, JSON_UNESCAPED_UNICODE) : null;
         }
 
+        // Lấy và xử lý bill_of_master (giữ ảnh cũ + thêm file mới)
+        $bill_of_master = $currentFamily ? $currentFamily['bill_of_master'] : null;
+        $existingMasterFiles = [];
+        if ($bill_of_master) {
+            $decoded = json_decode($bill_of_master, true);
+            $existingMasterFiles = is_array($decoded) ? $decoded : [$bill_of_master];
+        }
+        if (!empty($_FILES['bill_of_master']['name'])) {
+            $names = $_FILES['bill_of_master']['name'];
+            $uploaded = [];
+            if (is_array($names)) {
+                for ($i = 0; $i < count($names); $i++) {
+                    $file = [
+                        'name' => $_FILES['bill_of_master']['name'][$i],
+                        'type' => $_FILES['bill_of_master']['type'][$i],
+                        'tmp_name' => $_FILES['bill_of_master']['tmp_name'][$i],
+                        'error' => $_FILES['bill_of_master']['error'][$i],
+                        'size' => $_FILES['bill_of_master']['size'][$i]
+                    ];
+                    if ($file['error'] === UPLOAD_ERR_OK) {
+                        $fileName = $this->handleFileUpload($file);
+                        if ($fileName) {
+                            $uploaded[] = $fileName;
+                        }
+                    }
+                }
+            } else {
+                $file = $_FILES['bill_of_master'];
+                if ($file['error'] === UPLOAD_ERR_OK) {
+                    $fileName = $this->handleFileUpload($file);
+                    if ($fileName) {
+                        $uploaded[] = $fileName;
+                    }
+                }
+            }
+            if (!empty($uploaded)) {
+                $bill_of_master = json_encode(array_merge($existingMasterFiles, $uploaded), JSON_UNESCAPED_UNICODE);
+            } else {
+                $bill_of_master = !empty($existingMasterFiles) ? json_encode($existingMasterFiles, JSON_UNESCAPED_UNICODE) : null;
+            }
+        } else {
+            $bill_of_master = !empty($existingMasterFiles) ? json_encode($existingMasterFiles, JSON_UNESCAPED_UNICODE) : null;
+        }
+
         // Validation
         $errors = [];
         if (empty($form)) {
@@ -391,6 +471,7 @@ class FamilyController
                 'name_bank' => $name_bank,
                 'user' => $user,
                 'bill_payment' => $bill_payment,
+                'bill_of_master' => $bill_of_master,
                 'status' => $status,
                 'pay_due_date' => $pay_due_date,
                 'note' => $note,

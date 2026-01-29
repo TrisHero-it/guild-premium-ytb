@@ -17,62 +17,93 @@
         <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
 </head>
 
-<body class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-sidebar-fixed kt-header-fixed">
-        <div class="kt-container-fixed">
-                <div class="grid gap-5 lg:gap-7.5">
-                        <div class="grid">
-                                <div class="kt-card kt-card-grid h-full min-w-full">
-                                        <div class="kt-card-header">
-                                                <h3 class="kt-card-title">Sửa Collaborator</h3>
-                                        </div>
-                                        <div class="kt-card-body">
-                                                <?php if (isset($_SESSION['errors']) && !empty($_SESSION['errors'])): ?>
-                                                        <div class="mb-5 p-4 bg-destructive/10 border border-destructive rounded-lg">
-                                                                <div class="flex items-start gap-2">
-                                                                        <i class="ki-filled ki-information text-destructive text-lg mt-0.5"></i>
-                                                                        <div class="flex flex-col gap-1">
-                                                                                <h4 class="text-sm font-semibold text-destructive">Có lỗi xảy ra:</h4>
-                                                                                <ul class="list-disc list-inside text-sm text-destructive space-y-1">
-                                                                                        <?php foreach ($_SESSION['errors'] as $error): ?>
-                                                                                                <li><?php echo htmlspecialchars($error); ?></li>
-                                                                                        <?php endforeach; ?>
-                                                                                </ul>
+<body class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-header-fixed" style="background: ghostwhite;">
+        <div class="flex grow flex-col min-h-full">
+                <nav class="bg-background border-b border-border shrink-0 z-30">
+                        <div class="flex items-center justify-between gap-4 px-4 lg:px-6 h-14">
+                                <a href="/" class="flex items-center gap-2 shrink-0">
+                                        <img class="h-8 w-auto dark:hidden" src="uploads/Logo.png" alt="Muakey" style="max-height: 32px; max-width: 180px;" />
+                                        <img class="h-8 w-auto hidden dark:block" src="uploads/Logo.png" alt="Muakey" style="max-height: 32px; max-width: 180px;" />
+                                </a>
+                                <div class="flex items-center gap-1">
+                                        <a href="/" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary kt-menu-item-active:bg-accent/60 kt-menu-item-active:text-primary">
+                                                <i class="ki-filled ki-element-11 text-lg"></i>
+                                                Danh sách family
+                                        </a>
+                                        <a href="?act=add-family" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary">
+                                                <i class="ki-filled ki-plus text-lg"></i>
+                                                Thêm family
+                                        </a>
+                                        <span class="w-px h-5 bg-border mx-1" aria-hidden="true"></span>
+                                        <a href="?act=collaborators" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary">
+                                                <i class="ki-filled ki-setting-2 text-lg"></i>
+                                                Danh sách hướng dẫn
+                                        </a>
+                                        <a href="?act=collaborators&sub=add" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary">
+                                                <i class="ki-filled ki-plus text-lg"></i>
+                                                Thêm form hướng dẫn
+                                        </a>
+                                </div>
+                        </div>
+                </nav>
+                <div class="kt-wrapper flex grow flex-col min-w-0 pt-5">
+                        <div class="kt-container-fixed">
+                                <div class="grid gap-5 lg:gap-7.5">
+                                        <div class="grid">
+                                                <div class="kt-card kt-card-grid h-full min-w-full">
+                                                        <div class="kt-card-header">
+                                                                <h3 class="kt-card-title">Sửa Collaborator</h3>
+                                                        </div>
+                                                        <div class="kt-card-body">
+                                                                <?php if (isset($_SESSION['errors']) && !empty($_SESSION['errors'])): ?>
+                                                                        <div class="mb-5 p-4 bg-destructive/10 border border-destructive rounded-lg">
+                                                                                <div class="flex items-start gap-2">
+                                                                                        <i class="ki-filled ki-information text-destructive text-lg mt-0.5"></i>
+                                                                                        <div class="flex flex-col gap-1">
+                                                                                                <h4 class="text-sm font-semibold text-destructive">Có lỗi xảy ra:</h4>
+                                                                                                <ul class="list-disc list-inside text-sm text-destructive space-y-1">
+                                                                                                        <?php foreach ($_SESSION['errors'] as $error): ?>
+                                                                                                                <li><?php echo htmlspecialchars($error); ?></li>
+                                                                                                        <?php endforeach; ?>
+                                                                                                </ul>
+                                                                                        </div>
+                                                                                </div>
                                                                         </div>
-                                                                </div>
-                                                        </div>
-                                                        <?php unset($_SESSION['errors']); ?>
-                                                <?php endif; ?>
+                                                                        <?php unset($_SESSION['errors']); ?>
+                                                                <?php endif; ?>
 
-                                                <form method="POST" action="/" id="edit_collaborator_form" class="grid gap-5 lg:gap-7.5">
-                                                        <input type="hidden" name="action" value="update-collaborator">
-                                                        <input type="hidden" name="id" value="<?php echo htmlspecialchars($collaborator['id']); ?>">
+                                                                <form method="POST" action="/" id="edit_collaborator_form" class="grid gap-5 lg:gap-7.5">
+                                                                        <input type="hidden" name="action" value="update-collaborator">
+                                                                        <input type="hidden" name="id" value="<?php echo htmlspecialchars($collaborator['id']); ?>">
 
-                                                        <div class="flex flex-col gap-2" style="padding: 10px;">
-                                                                <label class="kt-form-label text-mono font-semibold text-sm">
-                                                                        Nội dung <span class="text-destructive">*</span>
-                                                                </label>
-                                                                <textarea name="content" id="content_editor" style="visibility: hidden; position: absolute;"><?php echo isset($_SESSION['old_data']['content']) ? htmlspecialchars($_SESSION['old_data']['content']) : htmlspecialchars($collaborator['content']); ?></textarea>
-                                                        </div>
+                                                                        <div class="flex flex-col gap-2" style="padding: 10px;">
+                                                                                <label class="kt-form-label text-mono font-semibold text-sm">
+                                                                                        Nội dung <span class="text-destructive">*</span>
+                                                                                </label>
+                                                                                <textarea name="content" id="content_editor" style="visibility: hidden; position: absolute;"><?php echo isset($_SESSION['old_data']['content']) ? htmlspecialchars($_SESSION['old_data']['content']) : htmlspecialchars($collaborator['content']); ?></textarea>
+                                                                        </div>
 
-                                                        <div class="flex flex-col gap-2" style="padding: 0 10px;">
-                                                                <label class="kt-form-label text-mono font-semibold text-sm">
-                                                                        Trạng thái <span class="text-destructive">*</span>
-                                                                </label>
-                                                                <select name="status" class="kt-select" data-kt-select="true">
-                                                                        <option value="">Chọn trạng thái</option>
-                                                                        <option value="active" <?php
-                                                                                                $status = isset($_SESSION['old_data']['status']) ? $_SESSION['old_data']['status'] : $collaborator['status'];
-                                                                                                echo ($status === 'active') ? 'selected' : '';
-                                                                                                ?>>Hoạt động</option>
-                                                                        <option value="inactive" <?php echo ($status === 'inactive') ? 'selected' : ''; ?>>Không hoạt động</option>
-                                                                </select>
-                                                        </div>
+                                                                        <div class="flex flex-col gap-2" style="padding: 0 10px;">
+                                                                                <label class="kt-form-label text-mono font-semibold text-sm">
+                                                                                        Trạng thái <span class="text-destructive">*</span>
+                                                                                </label>
+                                                                                <select name="status" class="kt-select" data-kt-select="true">
+                                                                                        <option value="">Chọn trạng thái</option>
+                                                                                        <option value="active" <?php
+                                                                                                                $status = isset($_SESSION['old_data']['status']) ? $_SESSION['old_data']['status'] : $collaborator['status'];
+                                                                                                                echo ($status === 'active') ? 'selected' : '';
+                                                                                                                ?>>Hoạt động</option>
+                                                                                        <option value="inactive" <?php echo ($status === 'inactive') ? 'selected' : ''; ?>>Không hoạt động</option>
+                                                                                </select>
+                                                                        </div>
 
-                                                        <div class="flex items-center gap-2.5 justify-end" style="padding: 0 10px 10px 10px;">
-                                                                <a href="?act=collaborators" class="kt-btn kt-btn-outline">Hủy</a>
-                                                                <button type="submit" class="kt-btn kt-btn-primary">Cập nhật</button>
+                                                                        <div class="flex items-center gap-2.5 justify-end" style="padding: 0 10px 10px 10px;">
+                                                                                <a href="?act=collaborators" class="kt-btn kt-btn-outline">Hủy</a>
+                                                                                <button type="submit" class="kt-btn kt-btn-primary">Cập nhật</button>
+                                                                        </div>
+                                                                </form>
                                                         </div>
-                                                </form>
+                                                </div>
                                         </div>
                                 </div>
                         </div>

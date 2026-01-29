@@ -145,7 +145,22 @@
 </head>
 
 <body class="antialiased flex h-full text-base text-foreground bg-background" style="display: flex; flex-direction: column; height: 100vh;">
-
+    <!-- Nav bar -->
+    <nav class="bg-background border-b border-border shrink-0 z-30">
+        <div class="flex items-center justify-between gap-4 px-4 lg:px-6 h-14">
+            <a href="/" class="flex items-center gap-2 shrink-0">
+                <img class="h-8 w-auto dark:hidden" src="uploads/Logo.png" alt="Muakey" style="max-height: 32px; max-width: 180px;" />
+                <img class="h-8 w-auto hidden dark:block" src="uploads/Logo.png" alt="Muakey" style="max-height: 32px; max-width: 180px;" />
+            </a>
+            <div class="flex items-center gap-1">
+                <a href="/" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary">Danh sách family</a>
+                <a href="?act=add-family" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary">Thêm family</a>
+                <span class="w-px h-5 bg-border mx-1" aria-hidden="true"></span>
+                <a href="?act=collaborators" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary">Danh sách hướng dẫn</a>
+                <a href="?act=collaborators&sub=add" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary">Thêm form hướng dẫn</a>
+            </div>
+        </div>
+    </nav>
     <!-- Main Content -->
     <main class="flex-1">
         <div style="height: 242px; width: 100%; position: relative;">

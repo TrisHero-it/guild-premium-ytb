@@ -74,8 +74,7 @@
         }
 </style>
 
-<body class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-sidebar-fixed kt-header-fixed">
-        <!-- Theme Mode -->
+<body class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-sidebar-fixed kt-header-fixed" style="background: ghostwhite;">
         <script>
                 const defaultThemeMode = 'light'; // light|dark|system
                 let themeMode;
@@ -102,171 +101,48 @@
                 }
         </script>
 
-        <div class="flex grow">
-                <!-- Sidebar -->
-                <div class="kt-sidebar bg-background border-e border-e-border fixed top-0 bottom-0 z-20 hidden lg:flex flex-col items-stretch shrink-0 [--kt-drawer-enable:true] lg:[--kt-drawer-enable:false]"
-                        data-kt-drawer="true" data-kt-drawer-class="kt-drawer kt-drawer-start top-0 bottom-0"
-                        id="sidebar">
-                        <div class="kt-sidebar-header hidden lg:flex items-center relative justify-between px-3 lg:px-6 shrink-0"
-                                id="sidebar_header">
-                                <a class="dark:hidden" href="index.html">
-                                        <img class="default-logo min-h-[22px] max-w-none"
-                                                src="uploads/Logo.png" style="width: 220px" alt="Muakey" />
-                                        <img class="small-logo min-h-[18px] max-w-none" style="width : 29px"
-                                                src="https://muakey.com/favicon.ico" />
+        <div class="flex grow flex-col min-h-full">
+                <!-- Nav bar -->
+                <nav class="bg-background border-b border-border shrink-0 z-30">
+                        <div class="flex items-center justify-between gap-4 px-4 lg:px-6 h-14">
+                                <a href="/" class="flex items-center gap-2 shrink-0">
+                                        <img class="h-8 w-auto dark:hidden" src="uploads/Logo.png" alt="Muakey" style="max-height: 32px; max-width: 180px;" />
+                                        <img class="h-8 w-auto hidden dark:block" src="uploads/Logo.png" alt="Muakey" style="max-height: 32px; max-width: 180px;" />
                                 </a>
-                                <a class="hidden dark:block" href="index.html">
-                                        <img class="default-logo min-h-[22px] max-w-none"
-                                                src="" alt="Muakey" />
-                                        <img class="small-logo min-h-[18px] max-w-none" style="width : 29px"
-                                                src="https://muakey.com/favicon.ico" />
-                                </a>
-                        </div>
-                        <div class="kt-sidebar-content flex grow shrink-0 py-5 pe-2" id="sidebar_content">
-                                <div class="kt-scrollable-y-hover grow shrink-0 flex ps-2 lg:ps-5 pe-1 lg:pe-3"
-                                        data-kt-scrollable="true" data-kt-scrollable-dependencies="#sidebar_header"
-                                        data-kt-scrollable-height="auto" data-kt-scrollable-offset="0px"
-                                        data-kt-scrollable-wrappers="#sidebar_content" id="sidebar_scrollable">
-                                        <!-- Sidebar Menu -->
-                                        <div class="kt-menu flex flex-col grow gap-1" data-kt-menu="true"
-                                                data-kt-menu-accordion-expand-all="false" id="sidebar_menu">
-                                                <div class="kt-menu-item here show" data-kt-menu-item-toggle="accordion"
-                                                        data-kt-menu-item-trigger="click">
-                                                        <div class="kt-menu-link flex items-center grow cursor-pointer border border-transparent gap-[10px] ps-[10px] pe-[10px] py-[6px]"
-                                                                tabindex="0">
-                                                                <span
-                                                                        class="kt-menu-icon items-start text-muted-foreground w-[20px]">
-                                                                        <i class="ki-filled ki-element-11 text-lg">
-                                                                        </i>
-                                                                </span>
-                                                                <span
-                                                                        class="kt-menu-title text-sm font-medium text-foreground kt-menu-item-active:text-primary kt-menu-link-hover:!text-primary">
-                                                                        Quản lí family-youtube
-                                                                </span>
-                                                                <span
-                                                                        class="kt-menu-arrow text-muted-foreground w-[20px] shrink-0 justify-end ms-1 me-[-10px]">
-                                                                        <span
-                                                                                class="inline-flex kt-menu-item-show:hidden">
-                                                                                <i
-                                                                                        class="ki-filled ki-plus text-[11px]">
-                                                                                </i>
-                                                                        </span>
-                                                                        <span
-                                                                                class="hidden kt-menu-item-show:inline-flex">
-                                                                                <i
-                                                                                        class="ki-filled ki-minus text-[11px]">
-                                                                                </i>
-                                                                        </span>
-                                                                </span>
-                                                        </div>
-                                                        <div
-                                                                class="kt-menu-accordion gap-1 ps-[10px] relative before:absolute before:start-[20px] before:top-0 before:bottom-0 before:border-s before:border-border">
-                                                                <div class="kt-menu-item active">
-                                                                        <a class="kt-menu-link border border-transparent items-center grow kt-menu-item-active:bg-accent/60 dark:menu-item-active:border-border kt-menu-item-active:rounded-lg hover:bg-accent/60 hover:rounded-lg gap-[14px] ps-[10px] pe-[10px] py-[8px]"
-                                                                                href="/" tabindex="0">
-                                                                                <span
-                                                                                        class="kt-menu-bullet flex w-[6px] -start-[3px] rtl:start-0 relative before:absolute before:top-0 before:size-[6px] before:rounded-full rtl:before:translate-x-1/2 before:-translate-y-1/2 kt-menu-item-active:before:bg-primary kt-menu-item-hover:before:bg-primary">
-                                                                                </span>
-                                                                                <span
-                                                                                        class="kt-menu-title text-2sm font-normal text-foreground kt-menu-item-active:text-primary kt-menu-item-active:font-semibold kt-menu-link-hover:!text-primary">
-                                                                                        Danh sách family
-                                                                                </span>
-                                                                        </a>
-                                                                </div>
-                                                                <div class="kt-menu-item">
-                                                                        <a class="kt-menu-link border border-transparent items-center grow kt-menu-item-active:bg-accent/60 dark:menu-item-active:border-border kt-menu-item-active:rounded-lg hover:bg-accent/60 hover:rounded-lg gap-[14px] ps-[10px] pe-[10px] py-[8px]"
-                                                                                href="?act=add-family"
-                                                                                tabindex="0">
-                                                                                <span
-                                                                                        class="kt-menu-bullet flex w-[6px] -start-[3px] rtl:start-0 relative before:absolute before:top-0 before:size-[6px] before:rounded-full rtl:before:translate-x-1/2 before:-translate-y-1/2 kt-menu-item-active:before:bg-primary kt-menu-item-hover:before:bg-primary">
-                                                                                </span>
-                                                                                <span
-                                                                                        class="kt-menu-title text-2sm font-normal text-foreground kt-menu-item-active:text-primary kt-menu-item-active:font-semibold kt-menu-link-hover:!text-primary">
-                                                                                        Thêm family
-                                                                                </span>
-                                                                        </a>
-                                                                </div>
-                                                        </div>
-                                                </div>
-
-                                                <div class="kt-menu-item" data-kt-menu-item-toggle="accordion"
-                                                        data-kt-menu-item-trigger="click">
-                                                        <div class="kt-menu-link flex items-center grow cursor-pointer border border-transparent gap-[10px] ps-[10px] pe-[10px] py-[6px]"
-                                                                tabindex="0">
-                                                                <span
-                                                                        class="kt-menu-icon items-start text-muted-foreground w-[20px]">
-                                                                        <i class="ki-filled ki-setting-2 text-lg">
-                                                                        </i>
-                                                                </span>
-                                                                <span
-                                                                        class="kt-menu-title text-sm font-medium text-foreground kt-menu-item-active:text-primary kt-menu-link-hover:!text-primary">
-                                                                        Quản lí trang hướng dẫn
-                                                                </span>
-                                                                <span
-                                                                        class="kt-menu-arrow text-muted-foreground w-[20px] shrink-0 justify-end ms-1 me-[-10px]">
-                                                                        <span
-                                                                                class="inline-flex kt-menu-item-show:hidden">
-                                                                                <i
-                                                                                        class="ki-filled ki-plus text-[11px]">
-                                                                                </i>
-                                                                        </span>
-                                                                        <span
-                                                                                class="hidden kt-menu-item-show:inline-flex">
-                                                                                <i
-                                                                                        class="ki-filled ki-minus text-[11px]">
-                                                                                </i>
-                                                                        </span>
-                                                                </span>
-                                                        </div>
-                                                        <div class="kt-menu-accordion gap-1 ps-[10px] relative before:absolute before:start-[20px] before:top-0 before:bottom-0 before:border-s before:border-border">
-                                                                <div class="kt-menu-item">
-                                                                        <a class="kt-menu-link border border-transparent items-center grow kt-menu-item-active:bg-accent/60 dark:menu-item-active:border-border kt-menu-item-active:rounded-lg hover:bg-accent/60 hover:rounded-lg gap-[14px] ps-[10px] pe-[10px] py-[8px]"
-                                                                                href="?act=collaborators"
-                                                                                tabindex="0">
-                                                                                <span
-                                                                                        class="kt-menu-bullet flex w-[6px] -start-[3px] rtl:start-0 relative before:absolute before:top-0 before:size-[6px] before:rounded-full rtl:before:translate-x-1/2 before:-translate-y-1/2 kt-menu-item-active:before:bg-primary kt-menu-item-hover:before:bg-primary">
-                                                                                </span>
-                                                                                <span
-                                                                                        class="kt-menu-title text-2sm font-normal text-foreground kt-menu-item-active:text-primary kt-menu-item-active:font-semibold kt-menu-link-hover:!text-primary">
-                                                                                        Danh sách
-                                                                                </span>
-                                                                        </a>
-                                                                </div>
-                                                                <div class="kt-menu-item">
-                                                                        <a class="kt-menu-link border border-transparent items-center grow kt-menu-item-active:bg-accent/60 dark:menu-item-active:border-border kt-menu-item-active:rounded-lg hover:bg-accent/60 hover:rounded-lg gap-[14px] ps-[10px] pe-[10px] py-[8px]"
-                                                                                href="?act=collaborators&sub=add"
-                                                                                tabindex="0">
-                                                                                <span
-                                                                                        class="kt-menu-bullet flex w-[6px] -start-[3px] rtl:start-0 relative before:absolute before:top-0 before:size-[6px] before:rounded-full rtl:before:translate-x-1/2 before:-translate-y-1/2 kt-menu-item-active:before:bg-primary kt-menu-item-hover:before:bg-primary">
-                                                                                </span>
-                                                                                <span
-                                                                                        class="kt-menu-title text-2sm font-normal text-foreground kt-menu-item-active:text-primary kt-menu-item-active:font-semibold kt-menu-link-hover:!text-primary">
-                                                                                        Thêm mới
-                                                                                </span>
-                                                                        </a>
-                                                                </div>
-                                                        </div>
-                                                </div>
-
-                                        </div>
-                                        <!-- End of Sidebar Menu -->
+                                <div class="flex items-center gap-1">
+                                        <a href="/" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary kt-menu-item-active:bg-accent/60 kt-menu-item-active:text-primary">
+                                                <i class="ki-filled ki-element-11 text-lg"></i>
+                                                Danh sách family
+                                        </a>
+                                        <a href="?act=add-family" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary">
+                                                <i class="ki-filled ki-plus text-lg"></i>
+                                                Thêm family
+                                        </a>
+                                        <span class="w-px h-5 bg-border mx-1" aria-hidden="true"></span>
+                                        <a href="?act=collaborators" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary">
+                                                <i class="ki-filled ki-setting-2 text-lg"></i>
+                                                Danh sách hướng dẫn
+                                        </a>
+                                        <a href="?act=collaborators&sub=add" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary">
+                                                <i class="ki-filled ki-plus text-lg"></i>
+                                                Thêm form hướng dẫn
+                                        </a>
                                 </div>
                         </div>
-                </div>
-                <!-- End of Sidebar -->
+                </nav>
                 <!-- Wrapper -->
-                <div class="kt-wrapper flex grow flex-col">
+                <div class="kt-wrapper flex grow flex-col min-w-0">
 
                         <!-- Content -->
-                        <main class="grow pt-5" id="content" role="content">
+                        <main class="grow" id="content" role="content">
                                 <!-- Container -->
                                 <div class="kt-container-fixed" id="contentContainer">
                                 </div>
                                 <!-- End of Container -->
 
                                 <!-- Container -->
-                                <div class="kt-container-fixed">
-                                        <div class="grid gap-5 lg:gap-7.5" style="width: 1500px;">
+                                <div class="kt-container-fixed" style="margin: 0 auto;width: 100%;max-width: unset;">
+                                        <div class="grid gap-5 lg:gap-7.5" style="width: 100%;">
 
                                                 <!-- begin: grid -->
                                                 <div class="grid lg:grid-cols-3 gap-5 lg:gap-7.5 items-stretch">
@@ -291,7 +167,7 @@
                                                                                         </form>
                                                                                 </div>
                                                                                 <div class="kt-card-body p-5">
-                                                                                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="families_grid">
+                                                                                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5" id="families_grid">
                                                                                                 <?php foreach ($families as $family): ?>
                                                                                                         <?php
                                                                                                         // Đếm số member đã điền (member 1 đến 5)
@@ -316,7 +192,7 @@
                                                                                                                 <div class="flex flex-col gap-4">
                                                                                                                         <!-- Header với thao tác -->
                                                                                                                         <div class="flex items-start justify-between border-b border-b-border pb-3">
-                                                                                                                                <h4 class="text-lg font-semibold text-foreground">Family #<?php echo $family['id']; ?></h4>
+                                                                                                                                <h4 class="text-lg font-semibold text-foreground">Family <?php echo $family['user']; ?></h4>
                                                                                                                                 <div class="flex items-center gap-2">
                                                                                                                                         <a class="kt-btn kt-btn-icon kt-btn-sm kt-btn-ghost"
                                                                                                                                                 href="?act=edit-family&id=<?php echo $family['id']; ?>"
@@ -345,8 +221,8 @@
                                                                                                                                 </div>
                                                                                                                                 <div class="flex items-center justify-between gap-2">
                                                                                                                                         <div class="flex flex-col gap-1">
-                                                                                                                                                <span class="text-xs text-muted-foreground font-medium">Số slot còn trống</span>
-                                                                                                                                                <span class="text-lg font-bold text-primary" style="color: red"><?php echo $emptySlots; ?></span>
+                                                                                                                                                <span class="text-xs text-muted-foreground font-medium">Số thành viên</span>
+                                                                                                                                                <span class="text-lg font-bold text-primary" style="color: red"><?php echo 5 - $emptySlots; ?> / 5</span>
                                                                                                                                         </div>
                                                                                                                                         <div class="flex flex-col gap-1 text-right">
                                                                                                                                                 <span class="text-xs text-muted-foreground font-medium">Chủ fam thanh toán</span>
@@ -359,16 +235,20 @@
                                                                                                                                 </div>
                                                                                                                         </div>
 
-                                                                                                                        <!-- Danh sách thành viên -->
+                                                                                                                        <!-- Danh sách thành viên (thu gọn, bấm Xem thêm mới hiện) -->
                                                                                                                         <div class="border-t border-t-border pt-3">
-                                                                                                                                <span class="text-xs text-muted-foreground font-medium mb-2 block">Thành viên</span>
-                                                                                                                                <div class="flex flex-col gap-2">
+                                                                                                                                <div class="flex items-center justify-between gap-2">
+                                                                                                                                        <span class="text-xs text-muted-foreground font-medium">Thành viên: <?php echo $filledSlots; ?></span>
+                                                                                                                                        <button type="button" class="card-toggle-members text-2sm text-primary font-medium hover:underline cursor-pointer">
+                                                                                                                                                Xem thêm
+                                                                                                                                        </button>
+                                                                                                                                </div>
+                                                                                                                                <div class="card-members-detail hidden flex flex-col gap-2 mt-2">
                                                                                                                                         <?php
                                                                                                                                         for ($i = 1; $i < 6; $i++) {
                                                                                                                                                 if (!isset($family['member' . $i]) || empty($family['member' . $i])) {
                                                                                                                                                         break;
                                                                                                                                                 }
-                                                                                                                                                // Sử dụng decoded data nếu có, nếu không thì decode từ JSON
                                                                                                                                                 if (isset($family['member' . $i . '_decoded']) && $family['member' . $i . '_is_json']) {
                                                                                                                                                         $member = $family['member' . $i . '_decoded'];
                                                                                                                                                 } else {
@@ -389,19 +269,14 @@
                                                                                                                                                                 <div class="text-xs text-muted-foreground">
                                                                                                                                                                         <?php
                                                                                                                                                                         $purchaseDateStr = "18:54:15 19/01/2026";
-                                                                                                                                                                        // 1️⃣ Tạo DateTime từ chuỗi
                                                                                                                                                                         $purchaseDate = DateTime::createFromFormat('H:i:s d/m/Y', $purchaseDateStr);
-                                                                                                                                                                        // 2️⃣ Cộng 6 tháng
                                                                                                                                                                         if (str_contains($member['product_name'], '6')) {
                                                                                                                                                                                 $expireDate = (clone $purchaseDate)->modify('+6 months');
                                                                                                                                                                         } else {
                                                                                                                                                                                 $expireDate = (clone $purchaseDate)->modify('+12 months');
                                                                                                                                                                         }
-                                                                                                                                                                        // 3️⃣ Thời điểm hiện tại
                                                                                                                                                                         $now = new DateTime();
-                                                                                                                                                                        // 4️⃣ Tính chênh lệch
                                                                                                                                                                         $diff = $now->diff($expireDate);
-                                                                                                                                                                        // 5️⃣ Lấy số ngày còn lại
                                                                                                                                                                         $daysRemaining = (int)$diff->format('%r%a');
                                                                                                                                                                         echo "Còn lại: <strong>$daysRemaining</strong> ngày";
                                                                                                                                                                         ?>
@@ -645,6 +520,18 @@
                 document.addEventListener('DOMContentLoaded', function() {
                         // Use event delegation for dynamically added buttons
                         document.addEventListener('click', function(e) {
+                                // Toggle danh sách thành viên trong card (Xem thêm / Thu gọn)
+                                if (e.target.closest('.card-toggle-members')) {
+                                        e.preventDefault();
+                                        const btn = e.target.closest('.card-toggle-members');
+                                        const card = btn.closest('.family-card');
+                                        const detail = card ? card.querySelector('.card-members-detail') : null;
+                                        if (detail) {
+                                                detail.classList.toggle('hidden');
+                                                btn.textContent = detail.classList.contains('hidden') ? 'Xem thêm' : 'Thu gọn';
+                                        }
+                                        return;
+                                }
                                 if (e.target.closest('.member-view-btn')) {
                                         e.preventDefault();
                                         e.stopPropagation();

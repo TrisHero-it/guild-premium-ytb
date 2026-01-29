@@ -111,11 +111,11 @@ class family
         $db = new db();
         $query = "INSERT INTO family (
             form, payment_at, email, number_phone, number_bank, name_bank, 
-            user, bill_payment, status, pay_due_date, note, 
+            user, bill_payment, bill_of_master, status, pay_due_date, note, 
             member1, member2, member3, member4, member5
         ) VALUES (
             :form, :payment_at, :email, :number_phone, :number_bank, :name_bank, 
-            :user, :bill_payment, :status, :pay_due_date, :note, 
+            :user, :bill_payment, :bill_of_master, :status, :pay_due_date, :note, 
             :member1, :member2, :member3, :member4, :member5
         )";
 
@@ -128,6 +128,7 @@ class family
             ':name_bank' => $data['name_bank'],
             ':user' => $data['user'],
             ':bill_payment' => $data['bill_payment'] ?? null,
+            ':bill_of_master' => $data['bill_of_master'] ?? null,
             ':status' => $data['status'],
             ':pay_due_date' => $data['pay_due_date'],
             ':note' => $data['note'] ?? null,
@@ -163,6 +164,7 @@ class family
             name_bank = :name_bank, 
             user = :user, 
             bill_payment = :bill_payment, 
+            bill_of_master = :bill_of_master, 
             status = :status, 
             pay_due_date = :pay_due_date, 
             note = :note, 
@@ -183,6 +185,7 @@ class family
             ':name_bank' => $data['name_bank'],
             ':user' => $data['user'],
             ':bill_payment' => $data['bill_payment'] ?? null,
+            ':bill_of_master' => $data['bill_of_master'] ?? null,
             ':status' => $data['status'],
             ':pay_due_date' => $data['pay_due_date'],
             ':note' => $data['note'] ?? null,
