@@ -86,32 +86,32 @@
     <div class="flex grow flex-col min-h-full">
         <!-- Nav bar -->
         <nav class="bg-background border-b border-border shrink-0 z-30">
-                        <div class="flex items-center justify-between gap-4 px-4 lg:px-6 h-14">
-                                <a href="/" class="flex items-center gap-2 shrink-0">
-                                        <img class="h-8 w-auto dark:hidden" src="uploads/Logo.png" alt="Muakey" style="max-height: 32px; max-width: 180px;" />
-                                        <img class="h-8 w-auto hidden dark:block" src="uploads/Logo.png" alt="Muakey" style="max-height: 32px; max-width: 180px;" />
-                                </a>
-                                <div class="flex items-center gap-1">
-                                        <a href="/" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary kt-menu-item-active:bg-accent/60 kt-menu-item-active:text-primary">
-                                                <i class="ki-filled ki-element-11 text-lg"></i>
-                                                Danh sách family
-                                        </a>
-                                        <a href="?act=add-family" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary">
-                                                <i class="ki-filled ki-plus text-lg"></i>
-                                                Thêm family
-                                        </a>
-                                        <span class="w-px h-5 bg-border mx-1" aria-hidden="true"></span>
-                                        <a href="?act=collaborators" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary">
-                                                <i class="ki-filled ki-setting-2 text-lg"></i>
-                                                Danh sách hướng dẫn
-                                        </a>
-                                        <a href="?act=collaborators&sub=add" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary">
-                                                <i class="ki-filled ki-plus text-lg"></i>
-                                                Thêm form hướng dẫn
-                                        </a>
-                                </div>
-                        </div>
-                </nav>
+            <div class="flex items-center justify-between gap-4 px-4 lg:px-6 h-14">
+                <a href="/" class="flex items-center gap-2 shrink-0">
+                    <img class="h-8 w-auto dark:hidden" src="uploads/Logo.png" alt="Muakey" style="max-height: 32px; max-width: 180px;" />
+                    <img class="h-8 w-auto hidden dark:block" src="uploads/Logo.png" alt="Muakey" style="max-height: 32px; max-width: 180px;" />
+                </a>
+                <div class="flex items-center gap-1">
+                    <a href="/" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary kt-menu-item-active:bg-accent/60 kt-menu-item-active:text-primary">
+                        <i class="ki-filled ki-element-11 text-lg"></i>
+                        Danh sách family
+                    </a>
+                    <a href="?act=add-family" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary">
+                        <i class="ki-filled ki-plus text-lg"></i>
+                        Thêm family
+                    </a>
+                    <span class="w-px h-5 bg-border mx-1" aria-hidden="true"></span>
+                    <a href="?act=collaborators" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary">
+                        <i class="ki-filled ki-setting-2 text-lg"></i>
+                        Danh sách hướng dẫn
+                    </a>
+                    <a href="?act=collaborators&sub=add" class="kt-menu-link border border-transparent items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-accent/60 hover:text-primary">
+                        <i class="ki-filled ki-plus text-lg"></i>
+                        Thêm form hướng dẫn
+                    </a>
+                </div>
+            </div>
+        </nav>
         <!-- Wrapper -->
         <div class="kt-wrapper flex grow flex-col min-w-0">
 
@@ -209,6 +209,9 @@
                                     $formValue = $oldData ? ($oldData['form'] ?? '') : ($family['form'] ?? '');
                                     $emailValue = $oldData ? ($oldData['email'] ?? '') : ($family['email'] ?? '');
                                     $userValue = $oldData ? ($oldData['user'] ?? '') : ($family['user'] ?? '');
+                                    $monthToPayValue = $oldData ? ($oldData['month_to_pay'] ?? '') : ($family['month_to_pay'] ?? '');
+                                    $monthMasterPayValue = $oldData ? ($oldData['month_master_pay'] ?? '') : ($family['month_master_pay'] ?? '1');
+                                    $afiilicateByValue = $oldData ? ($oldData['afiilicate_by'] ?? '') : ($family['afiilicate_by'] ?? '');
                                     $numberPhoneValue = $oldData ? ($oldData['number_phone'] ?? '') : ($family['number_phone'] ?? '');
                                     $numberBankValue = $oldData ? ($oldData['number_bank'] ?? '') : ($family['number_bank'] ?? '');
                                     $nameBankValue = $oldData ? ($oldData['name_bank'] ?? '') : ($family['name_bank'] ?? '');
@@ -278,6 +281,41 @@
                                             </div>
                                         </div>
 
+                                        <!-- Row 2b: Tháng chủ farm / Tháng thanh toán -->
+                                        <div class="grid lg:grid-cols-2 gap-5" style="padding: 0 10px;">
+                                            <div class="flex flex-col gap-2">
+                                                <label class="kt-form-label text-mono font-semibold text-sm">
+                                                    Số tháng chủ farm thanh toán
+                                                </label>
+                                                <label class="kt-input">
+                                                    <i class="ki-filled ki-calendar"></i>
+                                                    <input type="number" name="month_master_pay" placeholder="Mặc định: 1" min="1" max="24" step="1" value="<?php echo $monthMasterPayValue !== '' && $monthMasterPayValue !== null ? (int)$monthMasterPayValue : '1'; ?>">
+                                                </label>
+                                            </div>
+                                            <div class="flex flex-col gap-2">
+                                                <label class="kt-form-label text-mono font-semibold text-sm">
+                                                    Tháng thanh toán
+                                                </label>
+                                                <label class="kt-input">
+                                                    <i class="ki-filled ki-calendar"></i>
+                                                    <input type="number" name="month_to_pay" placeholder="VD: 1, 3, 6, 12" min="1" max="12" step="1" value="<?php echo $monthToPayValue !== '' && $monthToPayValue !== null ? (int)$monthToPayValue : ''; ?>">
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Row 2c: Affiliate by -->
+                                        <div class="grid lg:grid-cols-2 gap-5" style="padding: 0 10px;">
+                                            <div class="flex flex-col gap-2">
+                                                <label class="kt-form-label text-mono font-semibold text-sm">
+                                                    Affiliate by
+                                                </label>
+                                                <label class="kt-input">
+                                                    <i class="ki-filled ki-user-tick"></i>
+                                                    <input type="text" name="afiilicate_by" placeholder="VD: Mã affiliate, tên CTV" value="<?php echo htmlspecialchars($afiilicateByValue); ?>">
+                                                </label>
+                                            </div>
+                                        </div>
+
                                         <!-- Row 3: Bank Information -->
                                         <div class="grid lg:grid-cols-2 gap-5" style="padding: 0 10px;">
                                             <div class="flex flex-col gap-2">
@@ -329,7 +367,7 @@
                                         </div>
 
                                         <!-- Row 4: Payment Date and Due Date -->
-                                        <div class="grid lg:grid-cols-2 gap-5" style="padding: 0 10px;">
+                                        <div id="payment-section" class="grid lg:grid-cols-2 gap-5" style="padding: 0 10px;">
                                             <div class="flex flex-col gap-2">
                                                 <label class="kt-form-label text-mono font-semibold text-sm">
                                                     Ngày thanh toán
@@ -341,7 +379,7 @@
                                             </div>
                                             <div class="flex flex-col gap-2">
                                                 <label class="kt-form-label text-mono font-semibold text-sm">
-                                                    Ngày đáo hạn <span class="text-destructive">*</span>
+                                                    Ngày thanh toán cho chủ farm <span class="text-destructive">*</span>
                                                 </label>
                                                 <label class="kt-input">
                                                     <i class="ki-filled ki-calendar-tick"></i>
@@ -2264,16 +2302,26 @@
                         });
                         if (Object.keys(result).length > 0) return result;
                     }
-                } catch (e) { /* fall through to key:value */ }
+                } catch (e) {
+                    /* fall through to key:value */
+                }
             }
 
             // Dạng "Key: Value" từng dòng (Mã đơn hàng / mã_đh, Tên sản phẩm / sản_phẩm, ...)
-            const lines = t.split('\n').map(function(line) { return line.trim(); }).filter(function(line) { return line; });
+            const lines = t.split('\n').map(function(line) {
+                return line.trim();
+            }).filter(function(line) {
+                return line;
+            });
             const data = {};
             const keyMap = {
-                'Mã đơn hàng': 'order_code', 'mã_đh': 'order_code',
-                'Tên sản phẩm': 'product_name', 'sản_phẩm': 'product_name',
-                'Email': 'email', 'Khu vực bạn sống': 'region', 'Ngày mua': 'purchase_date'
+                'Mã đơn hàng': 'order_code',
+                'Mã ĐH': 'order_code',
+                'Tên sản phẩm': 'product_name',
+                'Sản Phẩm': 'product_name',
+                'Email': 'email',
+                'Khu vực bạn sống': 'region',
+                'Ngày mua': 'purchase_date'
             };
             lines.forEach(function(line) {
                 const colonIndex = line.indexOf(':');

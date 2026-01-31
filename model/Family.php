@@ -24,23 +24,28 @@ class family
         $orderCode = trim($orderCode);
         $hasSearch = $orderCode !== '';
 
-        // WHERE: tìm order_code trong JSON của member1..member5 (MySQL JSON_EXTRACT)
+        // WHERE: tìm order_code hoặc email trong JSON của member1..member5 (MySQL JSON_EXTRACT)
         $whereSql = '';
         $params = [];
         if ($hasSearch) {
             $term = '%' . $orderCode . '%';
             $whereSql = " WHERE (
-                JSON_UNQUOTE(JSON_EXTRACT(member1, '$.order_code')) LIKE :term1
-                OR JSON_UNQUOTE(JSON_EXTRACT(member2, '$.order_code')) LIKE :term2
-                OR JSON_UNQUOTE(JSON_EXTRACT(member3, '$.order_code')) LIKE :term3
-                OR JSON_UNQUOTE(JSON_EXTRACT(member4, '$.order_code')) LIKE :term4
-                OR JSON_UNQUOTE(JSON_EXTRACT(member5, '$.order_code')) LIKE :term5
+                (JSON_UNQUOTE(JSON_EXTRACT(member1, '$.order_code')) LIKE :term1 OR JSON_UNQUOTE(JSON_EXTRACT(member1, '$.email')) LIKE :email1)
+                OR (JSON_UNQUOTE(JSON_EXTRACT(member2, '$.order_code')) LIKE :term2 OR JSON_UNQUOTE(JSON_EXTRACT(member2, '$.email')) LIKE :email2)
+                OR (JSON_UNQUOTE(JSON_EXTRACT(member3, '$.order_code')) LIKE :term3 OR JSON_UNQUOTE(JSON_EXTRACT(member3, '$.email')) LIKE :email3)
+                OR (JSON_UNQUOTE(JSON_EXTRACT(member4, '$.order_code')) LIKE :term4 OR JSON_UNQUOTE(JSON_EXTRACT(member4, '$.email')) LIKE :email4)
+                OR (JSON_UNQUOTE(JSON_EXTRACT(member5, '$.order_code')) LIKE :term5 OR JSON_UNQUOTE(JSON_EXTRACT(member5, '$.email')) LIKE :email5)
             )";
             $params[':term1'] = $term;
             $params[':term2'] = $term;
             $params[':term3'] = $term;
             $params[':term4'] = $term;
             $params[':term5'] = $term;
+            $params[':email1'] = $term;
+            $params[':email2'] = $term;
+            $params[':email3'] = $term;
+            $params[':email4'] = $term;
+            $params[':email5'] = $term;
         }
 
         // Đếm tổng số bản ghi
@@ -50,7 +55,14 @@ class family
         $total = (int) $stmtCount->fetchColumn();
 
         // Lấy danh sách có ORDER BY và LIMIT/OFFSET
-        $query = "SELECT * FROM family" . $whereSql . " ORDER BY id DESC";
+        // Sắp xếp: quá hạn (payment_at + 30 ngày < hiện tại) lên đầu, sau đó theo số ngày còn lại tăng dần
+        $query = "SELECT *, 
+            CASE 
+                WHEN DATE_ADD(payment_at, INTERVAL 30 DAY) < CURDATE() THEN 0 
+                ELSE 1 
+            END AS is_overdue,
+            DATEDIFF(DATE_ADD(payment_at, INTERVAL 30 DAY), CURDATE()) AS days_remaining
+            FROM family" . $whereSql . " ORDER BY is_overdue ASC, days_remaining ASC";
         if ($perPage > 0) {
             $offset = max(0, ($page - 1) * $perPage);
             $query .= " LIMIT " . (int) $perPage . " OFFSET " . (int) $offset;
@@ -67,7 +79,7 @@ class family
 
         return ['items' => $results, 'total' => $total];
     }
-    
+
     /**
      * Decode member data từ JSON nếu có
      */
@@ -97,12 +109,12 @@ class family
         $stmt = $conn->prepare($query);
         $stmt->execute([$id]);
         $result = $stmt->fetch();
-        
+
         // Decode JSON members if exists
         if ($result) {
             $result = $this->decodeMemberData($result);
         }
-        
+
         return $result;
     }
 
@@ -111,11 +123,11 @@ class family
         $db = new db();
         $query = "INSERT INTO family (
             form, payment_at, email, number_phone, number_bank, name_bank, 
-            user, bill_payment, bill_of_master, status, pay_due_date, note, 
+            user, month_master_pay, month_to_pay, afiilicate_by, bill_payment, bill_of_master, status, pay_due_date, note, 
             member1, member2, member3, member4, member5
         ) VALUES (
             :form, :payment_at, :email, :number_phone, :number_bank, :name_bank, 
-            :user, :bill_payment, :bill_of_master, :status, :pay_due_date, :note, 
+            :user, :month_master_pay, :month_to_pay, :afiilicate_by, :bill_payment, :bill_of_master, :status, :pay_due_date, :note, 
             :member1, :member2, :member3, :member4, :member5
         )";
 
@@ -127,6 +139,9 @@ class family
             ':number_bank' => $data['number_bank'],
             ':name_bank' => $data['name_bank'],
             ':user' => $data['user'],
+            ':month_master_pay' => isset($data['month_master_pay']) && $data['month_master_pay'] !== '' ? max(1, (int)$data['month_master_pay']) : 1,
+            ':month_to_pay' => isset($data['month_to_pay']) && $data['month_to_pay'] !== '' ? (int)$data['month_to_pay'] : null,
+            ':afiilicate_by' => isset($data['afiilicate_by']) && $data['afiilicate_by'] !== '' ? trim($data['afiilicate_by']) : null,
             ':bill_payment' => $data['bill_payment'] ?? null,
             ':bill_of_master' => $data['bill_of_master'] ?? null,
             ':status' => $data['status'],
@@ -163,6 +178,10 @@ class family
             number_bank = :number_bank, 
             name_bank = :name_bank, 
             user = :user, 
+            month_master_pay = :month_master_pay, 
+            month_to_pay = :month_to_pay, 
+            monthly_payment = :monthly_payment, 
+            afiilicate_by = :afiilicate_by, 
             bill_payment = :bill_payment, 
             bill_of_master = :bill_of_master, 
             status = :status, 
@@ -184,6 +203,10 @@ class family
             ':number_bank' => $data['number_bank'],
             ':name_bank' => $data['name_bank'],
             ':user' => $data['user'],
+            ':month_master_pay' => isset($data['month_master_pay']) && $data['month_master_pay'] !== '' ? max(1, (int)$data['month_master_pay']) : 1,
+            ':month_to_pay' => isset($data['month_to_pay']) && $data['month_to_pay'] !== '' ? (int)$data['month_to_pay'] : null,
+            ':monthly_payment' => isset($data['monthly_payment']) && $data['monthly_payment'] !== '' ? max(0, (int)$data['monthly_payment']) : 0,
+            ':afiilicate_by' => isset($data['afiilicate_by']) && $data['afiilicate_by'] !== '' ? trim($data['afiilicate_by']) : null,
             ':bill_payment' => $data['bill_payment'] ?? null,
             ':bill_of_master' => $data['bill_of_master'] ?? null,
             ':status' => $data['status'],

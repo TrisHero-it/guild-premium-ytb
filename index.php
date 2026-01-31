@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 require_once __DIR__ . '/model/Family.php';
 require_once __DIR__ . '/controller/FamilyController.php';
 require_once __DIR__ . '/controller/CollaboratorsController.php';
@@ -24,6 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 require_once __DIR__ . '/controller/FamilyController.php';
                                 $controller = new FamilyController();
                                 $controller->update();
+                                break;
+                        case 'quick-pay-family':
+                                require_once __DIR__ . '/controller/FamilyController.php';
+                                $controller = new FamilyController();
+                                $controller->quickPay();
                                 break;
                         case 'add-collaborator':
                                 require_once __DIR__ . '/controller/CollaboratorsController.php';

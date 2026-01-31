@@ -209,6 +209,41 @@
                                             </div>
                                         </div>
 
+                                        <!-- Row 2b: Tháng thanh toán / Tháng chủ farm -->
+                                        <div class="grid lg:grid-cols-2 gap-5" style="padding: 0 10px;">
+                                            <div class="flex flex-col gap-2">
+                                                <label class="kt-form-label text-mono font-semibold text-sm">
+                                                    Số tháng chủ farm thanh toán
+                                                </label>
+                                                <label class="kt-input">
+                                                    <i class="ki-filled ki-calendar"></i>
+                                                    <input type="number" name="month_master_pay" placeholder="Mặc định: 1" min="1" max="24" step="1" value="1">
+                                                </label>
+                                            </div>
+                                            <div class="flex flex-col gap-2">
+                                                <label class="kt-form-label text-mono font-semibold text-sm">
+                                                    Tháng thanh toán
+                                                </label>
+                                                <label class="kt-input">
+                                                    <i class="ki-filled ki-calendar"></i>
+                                                    <input type="number" name="month_to_pay" placeholder="VD: 1, 3, 6, 12" min="1" max="12" step="1">
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Row 2c: Affiliate by -->
+                                        <div class="grid lg:grid-cols-2 gap-5" style="padding: 0 10px;">
+                                            <div class="flex flex-col gap-2">
+                                                <label class="kt-form-label text-mono font-semibold text-sm">
+                                                    Affiliate by
+                                                </label>
+                                                <label class="kt-input">
+                                                    <i class="ki-filled ki-user-tick"></i>
+                                                    <input type="text" name="afiilicate_by" placeholder="VD: Mã affiliate, tên CTV">
+                                                </label>
+                                            </div>
+                                        </div>
+
                                         <!-- Row 3: Bank Information -->
                                         <div class="grid lg:grid-cols-2 gap-5" style="padding: 0 10px;">
                                             <div class="flex flex-col gap-2">
@@ -224,10 +259,34 @@
                                                 <label class="kt-form-label text-mono font-semibold text-sm">
                                                     Tên ngân hàng <span class="text-destructive">*</span>
                                                 </label>
-                                                <label class="kt-input">
-                                                    <i class="ki-filled ki-bank"></i>
-                                                    <input type="text" name="name_bank" placeholder="Techcombank" required>
-                                                </label>
+                                                <select name="name_bank" id="name_bank_select" class="kt-select" required>
+                                                    <option value="">Chọn ngân hàng</option>
+                                                    <?php if (!empty($nameBankValue)): ?>
+                                                        <option value="<?php echo htmlspecialchars($nameBankValue); ?>" selected><?php echo htmlspecialchars($nameBankValue); ?></option>
+                                                    <?php endif; ?>
+                                                </select>
+                                                <script>
+                                                    document.addEventListener('DOMContentLoaded', function() {
+                                                        // Gọi API danh sách ngân hàng
+                                                        fetch('https://api.vietqr.io/v2/banks')
+                                                            .then(res => res.json())
+                                                            .then(data => {
+                                                                if (data && data.data) {
+                                                                    const select = document.getElementById('name_bank_select');
+                                                                    // Xóa option cũ (trừ option đầu để chọn)
+                                                                    while (select.options.length > 1) {
+                                                                        select.remove(1);
+                                                                    }
+                                                                    data.data.forEach(function(bank) {
+                                                                        const option = document.createElement('option');
+                                                                        option.value = bank.shortName || bank.code || bank.name;
+                                                                        option.text = bank.shortName;
+                                                                        select.appendChild(option);
+                                                                    });
+                                                                }
+                                                            });
+                                                    });
+                                                </script>
                                             </div>
                                         </div>
 
@@ -244,7 +303,7 @@
                                             </div>
                                             <div class="flex flex-col gap-2">
                                                 <label class="kt-form-label text-mono font-semibold text-sm">
-                                                    Ngày đáo hạn <span class="text-destructive">*</span>
+                                                    Ngày thanh toán cho chủ farm <span class="text-destructive">*</span>
                                                 </label>
                                                 <label class="kt-input">
                                                     <i class="ki-filled ki-calendar-tick"></i>
@@ -2124,9 +2183,9 @@
             const data = {};
             const keyMap = {
                 'Mã đơn hàng': 'order_code',
-                'mã_đh': 'order_code',
+                'Mã ĐH': 'order_code',
                 'Tên sản phẩm': 'product_name',
-                'sản_phẩm': 'product_name',
+                'Sản Phẩm': 'product_name',
                 'Email': 'email',
                 'Khu vực bạn sống': 'region',
                 'Ngày mua': 'purchase_date'
@@ -2183,7 +2242,5 @@
     </script>
     <!-- End of Scripts -->
 </body>
-
-<!-- Mirrored from keenthemes.com/metronic/tailwind/demo1/ by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 19 Jan 2026 07:07:01 GMT -->
 
 </html>
