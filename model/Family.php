@@ -50,7 +50,14 @@ class family
         $total = (int) $stmtCount->fetchColumn();
 
         // Lấy danh sách có ORDER BY và LIMIT/OFFSET
-        $query = "SELECT * FROM family" . $whereSql . " ORDER BY id DESC";
+        // Sắp xếp: quá hạn (payment_at + 30 ngày < hiện tại) lên đầu, sau đó theo số ngày còn lại tăng dần
+        $query = "SELECT *, 
+            CASE 
+                WHEN DATE_ADD(payment_at, INTERVAL 30 DAY) < CURDATE() THEN 0 
+                ELSE 1 
+            END AS is_overdue,
+            DATEDIFF(DATE_ADD(payment_at, INTERVAL 30 DAY), CURDATE()) AS days_remaining
+            FROM family" . $whereSql . " ORDER BY is_overdue ASC, days_remaining ASC";
         if ($perPage > 0) {
             $offset = max(0, ($page - 1) * $perPage);
             $query .= " LIMIT " . (int) $perPage . " OFFSET " . (int) $offset;
@@ -111,11 +118,11 @@ class family
         $db = new db();
         $query = "INSERT INTO family (
             form, payment_at, email, number_phone, number_bank, name_bank, 
-            user, bill_payment, bill_of_master, status, pay_due_date, note, 
+            user, month_to_pay, bill_payment, bill_of_master, status, pay_due_date, note, 
             member1, member2, member3, member4, member5
         ) VALUES (
             :form, :payment_at, :email, :number_phone, :number_bank, :name_bank, 
-            :user, :bill_payment, :bill_of_master, :status, :pay_due_date, :note, 
+            :user, :month_to_pay, :bill_payment, :bill_of_master, :status, :pay_due_date, :note, 
             :member1, :member2, :member3, :member4, :member5
         )";
 
@@ -127,6 +134,7 @@ class family
             ':number_bank' => $data['number_bank'],
             ':name_bank' => $data['name_bank'],
             ':user' => $data['user'],
+            ':month_to_pay' => isset($data['month_to_pay']) && $data['month_to_pay'] !== '' ? (int)$data['month_to_pay'] : null,
             ':bill_payment' => $data['bill_payment'] ?? null,
             ':bill_of_master' => $data['bill_of_master'] ?? null,
             ':status' => $data['status'],
@@ -163,6 +171,7 @@ class family
             number_bank = :number_bank, 
             name_bank = :name_bank, 
             user = :user, 
+            month_to_pay = :month_to_pay, 
             bill_payment = :bill_payment, 
             bill_of_master = :bill_of_master, 
             status = :status, 
@@ -184,6 +193,7 @@ class family
             ':number_bank' => $data['number_bank'],
             ':name_bank' => $data['name_bank'],
             ':user' => $data['user'],
+            ':month_to_pay' => isset($data['month_to_pay']) && $data['month_to_pay'] !== '' ? (int)$data['month_to_pay'] : null,
             ':bill_payment' => $data['bill_payment'] ?? null,
             ':bill_of_master' => $data['bill_of_master'] ?? null,
             ':status' => $data['status'],

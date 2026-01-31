@@ -209,6 +209,19 @@
                                             </div>
                                         </div>
 
+                                        <!-- Row 2b: Tháng thanh toán -->
+                                        <div class="grid lg:grid-cols-2 gap-5" style="padding: 0 10px;">
+                                            <div class="flex flex-col gap-2">
+                                                <label class="kt-form-label text-mono font-semibold text-sm">
+                                                    Tháng thanh toán
+                                                </label>
+                                                <label class="kt-input">
+                                                    <i class="ki-filled ki-calendar"></i>
+                                                    <input type="number" name="month_to_pay" placeholder="VD: 1, 3, 6, 12" min="1" max="12" step="1">
+                                                </label>
+                                            </div>
+                                        </div>
+
                                         <!-- Row 3: Bank Information -->
                                         <div class="grid lg:grid-cols-2 gap-5" style="padding: 0 10px;">
                                             <div class="flex flex-col gap-2">
@@ -224,10 +237,34 @@
                                                 <label class="kt-form-label text-mono font-semibold text-sm">
                                                     Tên ngân hàng <span class="text-destructive">*</span>
                                                 </label>
-                                                <label class="kt-input">
-                                                    <i class="ki-filled ki-bank"></i>
-                                                    <input type="text" name="name_bank" placeholder="Techcombank" required>
-                                                </label>
+                                                <select name="name_bank" id="name_bank_select" class="kt-select" required>
+                                                    <option value="">Chọn ngân hàng</option>
+                                                    <?php if (!empty($nameBankValue)): ?>
+                                                        <option value="<?php echo htmlspecialchars($nameBankValue); ?>" selected><?php echo htmlspecialchars($nameBankValue); ?></option>
+                                                    <?php endif; ?>
+                                                </select>
+                                                <script>
+                                                    document.addEventListener('DOMContentLoaded', function() {
+                                                        // Gọi API danh sách ngân hàng
+                                                        fetch('https://api.vietqr.io/v2/banks')
+                                                            .then(res => res.json())
+                                                            .then(data => {
+                                                                if (data && data.data) {
+                                                                    const select = document.getElementById('name_bank_select');
+                                                                    // Xóa option cũ (trừ option đầu để chọn)
+                                                                    while (select.options.length > 1) {
+                                                                        select.remove(1);
+                                                                    }
+                                                                    data.data.forEach(function(bank) {
+                                                                        const option = document.createElement('option');
+                                                                        option.value = bank.shortName || bank.code || bank.name;
+                                                                        option.text = bank.shortName;
+                                                                        select.appendChild(option);
+                                                                    });
+                                                                }
+                                                            });
+                                                    });
+                                                </script>
                                             </div>
                                         </div>
 
@@ -244,7 +281,7 @@
                                             </div>
                                             <div class="flex flex-col gap-2">
                                                 <label class="kt-form-label text-mono font-semibold text-sm">
-                                                    Ngày đáo hạn <span class="text-destructive">*</span>
+                                                    Ngày thanh toán cho chủ farm <span class="text-destructive">*</span>
                                                 </label>
                                                 <label class="kt-input">
                                                     <i class="ki-filled ki-calendar-tick"></i>

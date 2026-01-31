@@ -72,6 +72,42 @@
         .border-t-border {
                 border-color: oklch(0.77 0 0);
         }
+
+        /* Loading animation */
+        @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+        }
+        
+        .animate-spin {
+                animation: spin 1s linear infinite;
+        }
+        
+        #search_form.loading #search_icon {
+                display: none;
+        }
+        
+        #search_form.loading #search_loading {
+                display: inline-block !important;
+        }
+        
+        #search_form.loading #search_btn_text {
+                display: none;
+        }
+        
+        #search_form.loading #search_btn_loading {
+                display: inline-flex !important;
+        }
+        
+        #search_form.loading #search_btn {
+                pointer-events: none;
+                opacity: 0.7;
+        }
+        
+        #search_form.loading #search_input {
+                pointer-events: none;
+                opacity: 0.7;
+        }
 </style>
 
 <body class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-sidebar-fixed kt-header-fixed" style="background: ghostwhite;">
@@ -155,15 +191,26 @@
                                                                                         <h3 class="kt-card-title">
                                                                                                 Youtube families
                                                                                         </h3>
-                                                                                        <form method="get" action="?" class="flex items-center gap-2">
+                                                                                        <form method="get" action="?" class="flex items-center gap-2" id="search_form">
                                                                                                 <div class="kt-input max-w-48">
-                                                                                                        <i class="ki-filled ki-magnifier"></i>
+                                                                                                        <i class="ki-filled ki-magnifier" id="search_icon"></i>
+                                                                                                        <i class="ki-filled ki-loading-spinner animate-spin hidden" id="search_loading" style="animation: spin 1s linear infinite;"></i>
                                                                                                         <input name="order_code"
                                                                                                                 placeholder="Tìm theo mã đơn hàng"
                                                                                                                 type="text"
+                                                                                                                id="search_input"
                                                                                                                 value="<?php echo htmlspecialchars(isset($orderCode) ? $orderCode : ''); ?>">
                                                                                                 </div>
-                                                                                                <button type="submit" class="kt-btn kt-btn-sm kt-btn-primary">Tìm</button>
+                                                                                                <button type="submit" class="kt-btn kt-btn-sm kt-btn-primary" id="search_btn">
+                                                                                                        <span id="search_btn_text">Tìm</span>
+                                                                                                        <span id="search_btn_loading" class="hidden flex items-center gap-1">
+                                                                                                                <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" style="animation: spin 1s linear infinite;">
+                                                                                                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                                                                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                                                                                </svg>
+                                                                                                                Đang tìm...
+                                                                                                        </span>
+                                                                                                </button>
                                                                                         </form>
                                                                                 </div>
                                                                                 <div class="kt-card-body p-5">
@@ -192,7 +239,7 @@
                                                                                                                 <div class="flex flex-col gap-4">
                                                                                                                         <!-- Header với thao tác -->
                                                                                                                         <div class="flex items-start justify-between border-b border-b-border pb-3">
-                                                                                                                                <h4 class="text-lg font-semibold text-foreground">Family <?php echo $family['user']; ?></h4>
+                                                                                                                                <h4 class="text-lg font-semibold text-foreground"><?php echo $family['user']; ?></h4>
                                                                                                                                 <div class="flex items-center gap-2">
                                                                                                                                         <a class="kt-btn kt-btn-icon kt-btn-sm kt-btn-ghost"
                                                                                                                                                 href="?act=edit-family&id=<?php echo $family['id']; ?>"
@@ -218,7 +265,7 @@
                                                                                                                                 <div class="flex flex-col gap-1">
                                                                                                                                         <span class="text-xs text-muted-foreground font-medium">Số điện thoại</span>
                                                                                                                                         <span class="text-sm font-medium text-foreground"><?php echo htmlspecialchars($family['number_phone']); ?></span>
-                                                                                                                                </div>
+                                                                                                                                </div>  
                                                                                                                                 <div class="flex items-center justify-between gap-2">
                                                                                                                                         <div class="flex flex-col gap-1">
                                                                                                                                                 <span class="text-xs text-muted-foreground font-medium">Số thành viên</span>
@@ -233,7 +280,91 @@
                                                                                                                                         <span class="text-xs text-muted-foreground font-medium">Thanh toán cho chủ fam</span>
                                                                                                                                         <span class="text-sm font-medium text-foreground"><?php echo date('d/m/Y', strtotime($family['pay_due_date'])); ?></span>
                                                                                                                                 </div>
+                                                                                                                                <?php
+                                                                                                                                // Tính ngày đích = payment_at + (month_to_pay * 30) ngày, nếu không có month_to_pay thì + 30 ngày
+                                                                                                                                $paymentDate = new DateTime($family['payment_at']);
+                                                                                                                                $daysToAdd = (!empty($family['month_to_pay']) && (int)$family['month_to_pay'] > 0) ? (int)$family['month_to_pay'] * 30 : 30;
+                                                                                                                                $targetDate = (clone $paymentDate)->modify('+' . $daysToAdd . ' days');
+                                                                                                                                $now = new DateTime();
+                                                                                                                                $diff = $now->diff($targetDate);
+                                                                                                                                $daysRemaining = (int)$diff->format('%r%a');
+
+                                                                                                                                // Xác định màu sắc dựa trên số ngày còn lại
+                                                                                                                                if ($daysRemaining <= 0) {
+                                                                                                                                        $countdownColor = 'color: #dc2626;'; // Đỏ - đã quá hạn
+                                                                                                                                        $countdownText = '' . abs($daysRemaining) . ' ngày';
+                                                                                                                                } elseif ($daysRemaining <= 7) {
+                                                                                                                                        $countdownColor = 'color: #f97316;'; // Cam - sắp đến hạn
+                                                                                                                                        $countdownText = $daysRemaining . ' ngày';
+                                                                                                                                } else {
+                                                                                                                                        $countdownColor = 'color: #16a34a;'; // Xanh - còn nhiều thời gian
+                                                                                                                                        $countdownText = $daysRemaining . ' ngày';
+                                                                                                                                }
+                                                                                                                                ?>
+                                                                                                                                <div class="flex items-center justify-between gap-2 bg-accent/50 rounded-lg p-2">
+                                                                                                                                        <div class="flex flex-col gap-1">
+                                                                                                                                                <span class="text-xs text-muted-foreground font-medium">Đếm ngược</span>
+                                                                                                                                                <span class="text-sm font-medium" style="<?php echo $countdownColor; ?>"><?php echo $targetDate->format('d/m/Y'); ?></span>
+                                                                                                                                        </div>
+                                                                                                                                        <div class="flex flex-col gap-1 text-right">
+                                                                                                                                                <span class="text-xs text-muted-foreground font-medium"><?php
+
+
+                                                                                                                                                                                                        if ($daysRemaining <= 0) {
+                                                                                                                                                                                                                echo "Đã quá hạn";
+                                                                                                                                                                                                        } else {
+                                                                                                                                                                                                                echo "Còn lại";
+                                                                                                                                                                                                        }
+
+                                                                                                                                                                                                        ?></span>
+                                                                                                                                                <span class="text-lg font-bold" style="<?php echo $countdownColor; ?>"><?php echo $countdownText; ?></span>
+                                                                                                                                        </div>
+                                                                                                                                </div>
                                                                                                                         </div>
+
+                                                                                                                        <?php
+                                                                                                                        // Tính ngày hết hạn gần nhất của các member (hiển thị luôn ngoài card)
+                                                                                                                        $nearestExpireDate = null;
+                                                                                                                        $nearestDaysRemaining = null;
+                                                                                                                        for ($k = 1; $k < 6; $k++) {
+                                                                                                                                if (!isset($family['member' . $k]) || empty($family['member' . $k])) continue;
+                                                                                                                                if (isset($family['member' . $k . '_decoded']) && $family['member' . $k . '_is_json']) {
+                                                                                                                                        $m = $family['member' . $k . '_decoded'];
+                                                                                                                                } else {
+                                                                                                                                        $m = json_decode($family['member' . $k], true);
+                                                                                                                                        if (!is_array($m) || empty($m)) continue;
+                                                                                                                                }
+                                                                                                                                $purchaseStr = isset($m['purchase_date']) ? trim($m['purchase_date']) : '';
+                                                                                                                                if ($purchaseStr === '') continue;
+                                                                                                                                $purchaseDate = DateTime::createFromFormat('H:i:s d/m/Y', $purchaseStr)
+                                                                                                                                        ?: DateTime::createFromFormat('d/m/Y H:i:s', $purchaseStr)
+                                                                                                                                        ?: DateTime::createFromFormat('d/m/Y', $purchaseStr);
+                                                                                                                                if (!$purchaseDate) continue;
+                                                                                                                                $expire = clone $purchaseDate;
+                                                                                                                                $expire->modify(str_contains((string)($m['product_name'] ?? ''), '6') ? '+6 months' : '+12 months');
+                                                                                                                                $daysRem = (int)(new DateTime())->diff($expire)->format('%r%a');
+                                                                                                                                if ($nearestExpireDate === null || $expire < $nearestExpireDate) {
+                                                                                                                                        $nearestExpireDate = $expire;
+                                                                                                                                        $nearestDaysRemaining = $daysRem;
+                                                                                                                                }
+                                                                                                                        }
+                                                                                                                        ?>
+                                                                                                                        <?php if ($nearestExpireDate !== null): ?>
+                                                                                                                                <div class="flex items-center justify-between gap-2 bg-accent/50 rounded-lg p-2">
+                                                                                                                                        <div class="flex flex-col gap-1">
+                                                                                                                                                <span class="text-xs text-muted-foreground font-medium">Ngày family trống</span>
+                                                                                                                                                <span class="text-sm font-medium text-foreground"><?php echo $nearestExpireDate->format('d/m/Y'); ?></span>
+                                                                                                                                        </div>
+                                                                                                                                        <div class="flex flex-col gap-1 text-right">
+                                                                                                                                                <span class="text-xs text-muted-foreground font-medium"><?php echo $nearestDaysRemaining <= 0 ? 'Đã quá hạn' : 'Còn lại'; ?></span>
+                                                                                                                                                <span class="text-lg font-bold" style="<?php
+                                                                                                                                                if ($nearestDaysRemaining <= 0) echo 'color: #dc2626;';
+                                                                                                                                                elseif ($nearestDaysRemaining <= 7) echo 'color: #f97316;';
+                                                                                                                                                else echo 'color: #16a34a;';
+                                                                                                                                                ?>"><?php echo $nearestDaysRemaining <= 0 ? abs($nearestDaysRemaining) . ' ngày' : $nearestDaysRemaining . ' ngày'; ?></span>
+                                                                                                                                        </div>
+                                                                                                                                </div>
+                                                                                                                        <?php endif; ?>
 
                                                                                                                         <!-- Danh sách thành viên (thu gọn, bấm Xem thêm mới hiện) -->
                                                                                                                         <div class="border-t border-t-border pt-3">
@@ -268,17 +399,23 @@
                                                                                                                                                                 </div>
                                                                                                                                                                 <div class="text-xs text-muted-foreground">
                                                                                                                                                                         <?php
-                                                                                                                                                                        $purchaseDateStr = "18:54:15 19/01/2026";
-                                                                                                                                                                        $purchaseDate = DateTime::createFromFormat('H:i:s d/m/Y', $purchaseDateStr);
-                                                                                                                                                                        if (str_contains($member['product_name'], '6')) {
-                                                                                                                                                                                $expireDate = (clone $purchaseDate)->modify('+6 months');
+                                                                                                                                                                        $purchaseDateStr = isset($member['purchase_date']) ? trim($member['purchase_date']) : '';
+                                                                                                                                                                        $purchaseDate = $purchaseDateStr !== ''
+                                                                                                                                                                                ? (DateTime::createFromFormat('H:i:s d/m/Y', $purchaseDateStr) ?: DateTime::createFromFormat('d/m/Y H:i:s', $purchaseDateStr) ?: DateTime::createFromFormat('d/m/Y', $purchaseDateStr))
+                                                                                                                                                                                : null;
+                                                                                                                                                                        if ($purchaseDate) {
+                                                                                                                                                                                if (str_contains((string)($member['product_name'] ?? ''), '6')) {
+                                                                                                                                                                                        $expireDate = (clone $purchaseDate)->modify('+6 months');
+                                                                                                                                                                                } else {
+                                                                                                                                                                                        $expireDate = (clone $purchaseDate)->modify('+12 months');
+                                                                                                                                                                                }
+                                                                                                                                                                                $now = new DateTime();
+                                                                                                                                                                                $diff = $now->diff($expireDate);
+                                                                                                                                                                                $daysRemaining = (int)$diff->format('%r%a');
+                                                                                                                                                                                echo $daysRemaining <= 0 ? "Đã quá hạn: <strong>" . abs($daysRemaining) . "</strong> ngày" : "Còn lại: <strong>$daysRemaining</strong> ngày";
                                                                                                                                                                         } else {
-                                                                                                                                                                                $expireDate = (clone $purchaseDate)->modify('+12 months');
+                                                                                                                                                                                echo "—";
                                                                                                                                                                         }
-                                                                                                                                                                        $now = new DateTime();
-                                                                                                                                                                        $diff = $now->diff($expireDate);
-                                                                                                                                                                        $daysRemaining = (int)$diff->format('%r%a');
-                                                                                                                                                                        echo "Còn lại: <strong>$daysRemaining</strong> ngày";
                                                                                                                                                                         ?>
                                                                                                                                                                 </div>
                                                                                                                                                                 <button
@@ -518,6 +655,26 @@
 
                 // Initialize event listeners for member view buttons
                 document.addEventListener('DOMContentLoaded', function() {
+                        // Search form loading effect
+                        const searchForm = document.getElementById('search_form');
+                        if (searchForm) {
+                                searchForm.addEventListener('submit', function(e) {
+                                        // Add loading class to form
+                                        searchForm.classList.add('loading');
+                                        
+                                        // Show loading state
+                                        const searchIcon = document.getElementById('search_icon');
+                                        const searchLoading = document.getElementById('search_loading');
+                                        const searchBtnText = document.getElementById('search_btn_text');
+                                        const searchBtnLoading = document.getElementById('search_btn_loading');
+                                        
+                                        if (searchIcon) searchIcon.classList.add('hidden');
+                                        if (searchLoading) searchLoading.classList.remove('hidden');
+                                        if (searchBtnText) searchBtnText.classList.add('hidden');
+                                        if (searchBtnLoading) searchBtnLoading.classList.remove('hidden');
+                                });
+                        }
+
                         // Use event delegation for dynamically added buttons
                         document.addEventListener('click', function(e) {
                                 // Toggle danh sách thành viên trong card (Xem thêm / Thu gọn)

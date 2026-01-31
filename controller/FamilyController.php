@@ -32,6 +32,7 @@ class FamilyController
         $form = isset($_POST['form']) ? trim($_POST['form']) : '';
         $email = isset($_POST['email']) ? trim($_POST['email']) : '';
         $user = isset($_POST['user']) ? trim($_POST['user']) : '';
+        $month_to_pay = isset($_POST['month_to_pay']) && $_POST['month_to_pay'] !== '' ? (int)$_POST['month_to_pay'] : null;
         $number_phone = isset($_POST['number_phone']) ? trim($_POST['number_phone']) : null;
         $number_bank = isset($_POST['number_bank']) ? trim($_POST['number_bank']) : '';
         $name_bank = isset($_POST['name_bank']) ? trim($_POST['name_bank']) : '';
@@ -162,6 +163,7 @@ class FamilyController
                 'number_bank' => $number_bank,
                 'name_bank' => $name_bank,
                 'user' => $user,
+                'month_to_pay' => $month_to_pay,
                 'bill_payment' => $bill_payment,
                 'bill_of_master' => $bill_of_master,
                 'status' => $status,
@@ -316,6 +318,7 @@ class FamilyController
         $form = isset($_POST['form']) ? trim($_POST['form']) : '';
         $email = isset($_POST['email']) ? trim($_POST['email']) : '';
         $user = isset($_POST['user']) ? trim($_POST['user']) : '';
+        $month_to_pay = isset($_POST['month_to_pay']) && $_POST['month_to_pay'] !== '' ? (int)$_POST['month_to_pay'] : null;
         $number_phone = isset($_POST['number_phone']) ? trim($_POST['number_phone']) : null;
         $number_bank = isset($_POST['number_bank']) ? trim($_POST['number_bank']) : '';
         $name_bank = isset($_POST['name_bank']) ? trim($_POST['name_bank']) : '';
@@ -470,6 +473,7 @@ class FamilyController
                 'number_bank' => $number_bank,
                 'name_bank' => $name_bank,
                 'user' => $user,
+                'month_to_pay' => $month_to_pay,
                 'bill_payment' => $bill_payment,
                 'bill_of_master' => $bill_of_master,
                 'status' => $status,
