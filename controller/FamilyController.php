@@ -32,6 +32,9 @@ class FamilyController
         $form = isset($_POST['form']) ? trim($_POST['form']) : '';
         $email = isset($_POST['email']) ? trim($_POST['email']) : '';
         $user = isset($_POST['user']) ? trim($_POST['user']) : '';
+        $month_master_pay = isset($_POST['month_master_pay']) && $_POST['month_master_pay'] !== '' ? max(1, (int)$_POST['month_master_pay']) : 1;
+        $month_to_pay = isset($_POST['month_to_pay']) && $_POST['month_to_pay'] !== '' ? (int)$_POST['month_to_pay'] : null;
+        $afiilicate_by = isset($_POST['afiilicate_by']) && $_POST['afiilicate_by'] !== '' ? trim($_POST['afiilicate_by']) : null;
         $number_phone = isset($_POST['number_phone']) ? trim($_POST['number_phone']) : null;
         $number_bank = isset($_POST['number_bank']) ? trim($_POST['number_bank']) : '';
         $name_bank = isset($_POST['name_bank']) ? trim($_POST['name_bank']) : '';
@@ -162,6 +165,9 @@ class FamilyController
                 'number_bank' => $number_bank,
                 'name_bank' => $name_bank,
                 'user' => $user,
+                'month_master_pay' => $month_master_pay,
+                'month_to_pay' => $month_to_pay,
+                'afiilicate_by' => $afiilicate_by,
                 'bill_payment' => $bill_payment,
                 'bill_of_master' => $bill_of_master,
                 'status' => $status,
@@ -297,6 +303,89 @@ class FamilyController
         header("Location: /");
     }
 
+    /**
+     * Cập nhật nhanh thanh toán cho chủ farm: chọn số tháng đã thanh toán, set payment_at = hôm nay, status = đã thanh toán.
+     */
+    public function quickPay()
+    {
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+            header("Location: /");
+            return;
+        }
+        $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+        $months = isset($_POST['month_to_pay']) ? (int)$_POST['month_to_pay'] : 0;
+        $monthlyPayment = isset($_POST['monthly_payment']) ? max(0, (int)$_POST['monthly_payment']) : 0;
+        if ($id <= 0 || $months < 1) {
+            $_SESSION['errors'] = ["Dữ liệu không hợp lệ. Chọn số tháng từ 1 trở lên."];
+            header("Location: /");
+            return;
+        }
+        $family = $this->familyModel->getById($id);
+        if (!$family) {
+            $_SESSION['errors'] = ["Không tìm thấy family."];
+            header("Location: /");
+            return;
+        }
+        // Bill đã CK: giữ bill cũ + thêm file mới nếu có upload
+        $bill_payment = $family['bill_payment'];
+        $existingFiles = [];
+        if ($bill_payment) {
+            $decoded = json_decode($bill_payment, true);
+            $existingFiles = is_array($decoded) ? $decoded : [$bill_payment];
+        }
+        if (!empty($_FILES['bill_payment']['name']) && $_FILES['bill_payment']['error'] === UPLOAD_ERR_OK) {
+            $file = $_FILES['bill_payment'];
+            $fileName = $this->handleFileUpload($file);
+            if ($fileName) {
+                $bill_payment = json_encode(array_merge($existingFiles, [$fileName]), JSON_UNESCAPED_UNICODE);
+            } else {
+                $bill_payment = !empty($existingFiles) ? json_encode($existingFiles, JSON_UNESCAPED_UNICODE) : null;
+            }
+        } else {
+            $bill_payment = !empty($existingFiles) ? json_encode($existingFiles, JSON_UNESCAPED_UNICODE) : null;
+        }
+
+        $paymentAt = date('Y-m-d');
+        // Ngày thanh toán cho chủ farm = hôm nay; đếm ngược kỳ sau dùng payment_at + month_to_pay*30
+        $payDueDateToday = $paymentAt;
+        $data = [
+            'form' => $family['form'],
+            'payment_at' => $paymentAt,
+            'email' => $family['email'],
+            'number_phone' => $family['number_phone'],
+            'number_bank' => $family['number_bank'],
+            'name_bank' => $family['name_bank'],
+            'user' => $family['user'],
+            'month_master_pay' => isset($family['month_master_pay']) && $family['month_master_pay'] !== '' ? max(1, (int)$family['month_master_pay']) : 1,
+            'month_to_pay' => $months,
+            'monthly_payment' => $monthlyPayment,
+            'afiilicate_by' => $family['afiilicate_by'] ?? null,
+            'bill_payment' => $bill_payment,
+            'bill_of_master' => $family['bill_of_master'],
+            'status' => 'da thanh toan',
+            'pay_due_date' => $payDueDateToday,
+            'note' => $family['note'],
+            'member1' => $family['member1'],
+            'member2' => $family['member2'],
+            'member3' => $family['member3'],
+            'member4' => $family['member4'],
+            'member5' => $family['member5']
+        ];
+        try {
+            $result = $this->familyModel->update($id, $data);
+            if ($result) {
+                $_SESSION['success'] = "Đã cập nhật thanh toán cho chủ farm: " . ($family['user'] ?? '') . " – " . $months . " tháng.";
+                header("Location: /");
+            } else {
+                $_SESSION['errors'] = ["Có lỗi khi cập nhật thanh toán."];
+                header("Location: /");
+            }
+        } catch (Exception $e) {
+            $_SESSION['errors'] = ["Lỗi: " . $e->getMessage()];
+            header("Location: /");
+        }
+    }
+
     public function update()
     {
         // Kiểm tra request method
@@ -316,6 +405,9 @@ class FamilyController
         $form = isset($_POST['form']) ? trim($_POST['form']) : '';
         $email = isset($_POST['email']) ? trim($_POST['email']) : '';
         $user = isset($_POST['user']) ? trim($_POST['user']) : '';
+        $month_master_pay = isset($_POST['month_master_pay']) && $_POST['month_master_pay'] !== '' ? max(1, (int)$_POST['month_master_pay']) : 1;
+        $month_to_pay = isset($_POST['month_to_pay']) && $_POST['month_to_pay'] !== '' ? (int)$_POST['month_to_pay'] : null;
+        $afiilicate_by = isset($_POST['afiilicate_by']) && $_POST['afiilicate_by'] !== '' ? trim($_POST['afiilicate_by']) : null;
         $number_phone = isset($_POST['number_phone']) ? trim($_POST['number_phone']) : null;
         $number_bank = isset($_POST['number_bank']) ? trim($_POST['number_bank']) : '';
         $name_bank = isset($_POST['name_bank']) ? trim($_POST['name_bank']) : '';
@@ -336,6 +428,13 @@ class FamilyController
         // Lấy thông tin family hiện tại để giữ bill_payment nếu không upload file mới
         $currentFamily = $this->familyModel->getById($id);
         $bill_payment = $currentFamily ? $currentFamily['bill_payment'] : null;
+        $monthly_payment = isset($_POST['monthly_payment']) ? max(0, (int)$_POST['monthly_payment']) : null;
+        if ($monthly_payment === null && $currentFamily) {
+            $monthly_payment = isset($currentFamily['monthly_payment']) ? max(0, (int)$currentFamily['monthly_payment']) : 0;
+        }
+        if ($monthly_payment === null) {
+            $monthly_payment = 0;
+        }
 
         // Giữ ảnh cũ, chỉ thêm file mới (không xóa ảnh cũ)
         $existingFiles = [];
@@ -470,6 +569,10 @@ class FamilyController
                 'number_bank' => $number_bank,
                 'name_bank' => $name_bank,
                 'user' => $user,
+                'month_master_pay' => $month_master_pay,
+                'month_to_pay' => $month_to_pay,
+                'monthly_payment' => $monthly_payment,
+                'afiilicate_by' => $afiilicate_by,
                 'bill_payment' => $bill_payment,
                 'bill_of_master' => $bill_of_master,
                 'status' => $status,
