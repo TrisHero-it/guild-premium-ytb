@@ -249,6 +249,74 @@ class FamilyController
         return null;
     }
 
+    private function handlePastedBillImage($dataUrl)
+    {
+        $maxFileSize = 10 * 1024 * 1024; // 10MB
+        $allowedTypes = [
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'image/gif' => 'gif',
+            'image/webp' => 'webp'
+        ];
+
+        if (!preg_match('/^data:(image\/(?:jpeg|png|gif|webp));base64,(.+)$/', $dataUrl, $matches)) {
+            $_SESSION['errors'][] = "Dữ liệu ảnh bill không hợp lệ.";
+            return null;
+        }
+
+        $binary = base64_decode($matches[2], true);
+        if ($binary === false) {
+            $_SESSION['errors'][] = "Không thể đọc dữ liệu ảnh bill.";
+            return null;
+        }
+
+        if (strlen($binary) > $maxFileSize) {
+            $_SESSION['errors'][] = "Ảnh bill quá lớn. Kích thước tối đa là 10MB";
+            return null;
+        }
+
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_buffer($finfo, $binary);
+        finfo_close($finfo);
+
+        if (!isset($allowedTypes[$mimeType])) {
+            $_SESSION['errors'][] = "Loại ảnh bill không được hỗ trợ.";
+            return null;
+        }
+
+        $fileName = uniqid() . '_' . time() . '.' . $allowedTypes[$mimeType];
+        $filePath = $this->uploadDir . $fileName;
+
+        return file_put_contents($filePath, $binary) !== false ? $fileName : null;
+    }
+
+    /**
+     * Tạo URL quay về danh sách đúng trang và từ khóa tìm kiếm hiện tại.
+     */
+    private function buildListRedirectUrlFromRequest()
+    {
+        $page = 1;
+        if (isset($_POST['page'])) {
+            $page = max(1, (int)$_POST['page']);
+        } elseif (isset($_GET['page'])) {
+            $page = max(1, (int)$_GET['page']);
+        }
+
+        $orderCode = '';
+        if (isset($_POST['order_code'])) {
+            $orderCode = trim((string)$_POST['order_code']);
+        } elseif (isset($_GET['order_code'])) {
+            $orderCode = trim((string)$_GET['order_code']);
+        }
+
+        $query = ['page' => $page];
+        if ($orderCode !== '') {
+            $query['order_code'] = $orderCode;
+        }
+
+        return '/?' . http_build_query($query);
+    }
+
     public function getAll()
     {
         $families = $this->familyModel->getAll();
@@ -259,13 +327,14 @@ class FamilyController
      * Lấy danh sách family có tìm kiếm theo order_code và phân trang.
      * @return array ['items' => array, 'total' => int, 'page' => int, 'per_page' => int]
      */
-    public function getListWithSearch($orderCode = '', $page = 1, $perPage = 50)
+    public function getListWithSearch($orderCode = '', $page = 1, $perPage = 20, $sort = '')
     {
         $page = max(1, (int) $page);
         $perPage = max(1, min(100, (int) $perPage));
-        $result = $this->familyModel->getBySearch($orderCode, $page, $perPage);
+        $result = $this->familyModel->getBySearch($orderCode, $page, $perPage, $sort);
         $result['page'] = $page;
         $result['per_page'] = $perPage;
+        $result['sort'] = $result['sort'] ?? $sort;
         return $result;
     }
 
@@ -276,16 +345,19 @@ class FamilyController
 
     public function delete()
     {
+        $redirectUrl = $this->buildListRedirectUrlFromRequest();
         // Kiểm tra request method
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-            header("Location: /");
+            header("Location: " . $redirectUrl);
+            return;
         }
 
         $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
 
         if ($id <= 0) {
             $_SESSION['errors'] = ["ID không hợp lệ"];
-            header("Location: /");
+            header("Location: " . $redirectUrl);
+            return;
         }
 
         try {
@@ -300,7 +372,7 @@ class FamilyController
             $_SESSION['errors'] = ["Lỗi: " . $e->getMessage()];
         }
 
-        header("Location: /");
+        header("Location: " . $redirectUrl);
     }
 
     /**
@@ -308,8 +380,9 @@ class FamilyController
      */
     public function quickPay()
     {
+        $redirectUrl = $this->buildListRedirectUrlFromRequest();
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-            header("Location: /");
+            header("Location: " . $redirectUrl);
             return;
         }
         $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
@@ -317,13 +390,13 @@ class FamilyController
         $monthlyPayment = isset($_POST['monthly_payment']) ? max(0, (int)$_POST['monthly_payment']) : 0;
         if ($id <= 0 || $months < 1) {
             $_SESSION['errors'] = ["Dữ liệu không hợp lệ. Chọn số tháng từ 1 trở lên."];
-            header("Location: /");
+            header("Location: " . $redirectUrl);
             return;
         }
         $family = $this->familyModel->getById($id);
         if (!$family) {
             $_SESSION['errors'] = ["Không tìm thấy family."];
-            header("Location: /");
+            header("Location: " . $redirectUrl);
             return;
         }
         // Bill đã CK: giữ bill cũ + thêm file mới nếu có upload
@@ -333,7 +406,14 @@ class FamilyController
             $decoded = json_decode($bill_payment, true);
             $existingFiles = is_array($decoded) ? $decoded : [$bill_payment];
         }
-        if (!empty($_FILES['bill_payment']['name']) && $_FILES['bill_payment']['error'] === UPLOAD_ERR_OK) {
+        if (!empty($_POST['bill_payment_paste'])) {
+            $fileName = $this->handlePastedBillImage($_POST['bill_payment_paste']);
+            if ($fileName) {
+                $bill_payment = json_encode(array_merge($existingFiles, [$fileName]), JSON_UNESCAPED_UNICODE);
+            } else {
+                $bill_payment = !empty($existingFiles) ? json_encode($existingFiles, JSON_UNESCAPED_UNICODE) : null;
+            }
+        } elseif (!empty($_FILES['bill_payment']['name']) && $_FILES['bill_payment']['error'] === UPLOAD_ERR_OK) {
             $file = $_FILES['bill_payment'];
             $fileName = $this->handleFileUpload($file);
             if ($fileName) {
@@ -350,20 +430,20 @@ class FamilyController
         $payDueDateToday = $paymentAt;
         $data = [
             'form' => $family['form'],
-            'payment_at' => $paymentAt,
+            'payment_at' =>  $paymentAt,
             'email' => $family['email'],
             'number_phone' => $family['number_phone'],
             'number_bank' => $family['number_bank'],
             'name_bank' => $family['name_bank'],
             'user' => $family['user'],
             'month_master_pay' => isset($family['month_master_pay']) && $family['month_master_pay'] !== '' ? max(1, (int)$family['month_master_pay']) : 1,
-            'month_to_pay' => $months,
+            'month_to_pay' => (int)($family['month_to_pay'] ?? 0) + (int)$months,
             'monthly_payment' => $monthlyPayment,
             'afiilicate_by' => $family['afiilicate_by'] ?? null,
             'bill_payment' => $bill_payment,
             'bill_of_master' => $family['bill_of_master'],
             'status' => 'da thanh toan',
-            'pay_due_date' => $payDueDateToday,
+            'pay_due_date' => $family['pay_due_date'] ?? $payDueDateToday,
             'note' => $family['note'],
             'member1' => $family['member1'],
             'member2' => $family['member2'],
@@ -375,29 +455,30 @@ class FamilyController
             $result = $this->familyModel->update($id, $data);
             if ($result) {
                 $_SESSION['success'] = "Đã cập nhật thanh toán cho chủ farm: " . ($family['user'] ?? '') . " – " . $months . " tháng.";
-                header("Location: /");
+                header("Location: " . $redirectUrl);
             } else {
                 $_SESSION['errors'] = ["Có lỗi khi cập nhật thanh toán."];
-                header("Location: /");
+                header("Location: " . $redirectUrl);
             }
         } catch (Exception $e) {
             $_SESSION['errors'] = ["Lỗi: " . $e->getMessage()];
-            header("Location: /");
+            header("Location: " . $redirectUrl);
         }
     }
 
     public function update()
     {
+        $redirectUrl = $this->buildListRedirectUrlFromRequest();
         // Kiểm tra request method
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-            header("Location: /");
+            header("Location: " . $redirectUrl);
             return;
         }
 
         $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
         if ($id <= 0) {
             $_SESSION['errors'] = ["ID không hợp lệ"];
-            header("Location: /");
+            header("Location: " . $redirectUrl);
             return;
         }
 
@@ -587,7 +668,7 @@ class FamilyController
 
             if ($result) {
                 $_SESSION['success'] = "Cập nhật family thành công!";
-                header("Location: /");
+                header("Location: " . $redirectUrl);
             } else {
                 $_SESSION['errors'] = ["Có lỗi xảy ra khi cập nhật family. Vui lòng thử lại!"];
                 header("Location: /?act=edit-family&id=" . $id);

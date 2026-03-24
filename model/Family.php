@@ -16,7 +16,7 @@ class family
      * @param int $perPage Số bản ghi mỗi trang. 0 = không phân trang (lấy hết)
      * @return array ['items' => array, 'total' => int]
      */
-    function getBySearch($orderCode = '', $page = 1, $perPage = 20)
+    function getBySearch($orderCode = '', $page = 1, $perPage = 20, $sort = '')
     {
         $db = new db();
         $conn = $db->getConnect();
@@ -55,14 +55,98 @@ class family
         $total = (int) $stmtCount->fetchColumn();
 
         // Lấy danh sách có ORDER BY và LIMIT/OFFSET
-        // Sắp xếp: quá hạn (payment_at + 30 ngày < hiện tại) lên đầu, sau đó theo số ngày còn lại tăng dần
-        $query = "SELECT *, 
-            CASE 
-                WHEN DATE_ADD(payment_at, INTERVAL 30 DAY) < CURDATE() THEN 0 
-                ELSE 1 
-            END AS is_overdue,
-            DATEDIFF(DATE_ADD(payment_at, INTERVAL 30 DAY), CURDATE()) AS days_remaining
-            FROM family" . $whereSql . " ORDER BY is_overdue ASC, days_remaining ASC";
+        // Mặc định: sắp xếp theo "lần thanh toán tiếp theo" (gần nhất lên trước).
+        $sort = trim((string) $sort);
+        $allowedSorts = [
+            '' => ['order' => 'next_payment_date ASC, id ASC', 'key' => 'next_payment'],
+            'next_payment' => ['order' => 'next_payment_date ASC, id ASC', 'key' => 'next_payment'],
+            'family_empty' => ['order' => 'family_empty_date ASC, id ASC', 'key' => 'family_empty'],
+            'members_desc' => ['order' => 'member_count DESC, id ASC', 'key' => 'members_desc'],
+            'members_asc' => ['order' => 'member_count ASC, id ASC', 'key' => 'members_asc'],
+        ];
+        $sortConfig = $allowedSorts[$sort] ?? $allowedSorts[''];
+
+        $query = "SELECT *,
+            COALESCE(
+                DATE_ADD(
+                    COALESCE(pay_due_date, payment_at),
+                    INTERVAL (
+                        CASE
+                            WHEN month_to_pay IS NULL OR month_to_pay <= 0 THEN 30
+                            ELSE month_to_pay * 30
+                        END
+                    ) DAY
+                ),
+                '9999-12-31'
+            ) AS next_payment_date
+            ,
+            -- Ngày family trống: lấy ngày hết hạn gần nhất của các member (càng gần càng lên trước)
+            LEAST(
+                COALESCE(
+                    DATE_ADD(
+                        COALESCE(
+                            STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(member1, '$.purchase_date')), '%H:%i:%s %d/%m/%Y'),
+                            STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(member1, '$.purchase_date')), '%d/%m/%Y %H:%i:%s'),
+                            STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(member1, '$.purchase_date')), '%d/%m/%Y')
+                        ),
+                        INTERVAL (CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(member1, '$.product_name')) LIKE '%6%' THEN 6 ELSE 12 END) MONTH
+                    ),
+                    '9999-12-31'
+                ),
+                COALESCE(
+                    DATE_ADD(
+                        COALESCE(
+                            STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(member2, '$.purchase_date')), '%H:%i:%s %d/%m/%Y'),
+                            STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(member2, '$.purchase_date')), '%d/%m/%Y %H:%i:%s'),
+                            STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(member2, '$.purchase_date')), '%d/%m/%Y')
+                        ),
+                        INTERVAL (CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(member2, '$.product_name')) LIKE '%6%' THEN 6 ELSE 12 END) MONTH
+                    ),
+                    '9999-12-31'
+                ),
+                COALESCE(
+                    DATE_ADD(
+                        COALESCE(
+                            STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(member3, '$.purchase_date')), '%H:%i:%s %d/%m/%Y'),
+                            STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(member3, '$.purchase_date')), '%d/%m/%Y %H:%i:%s'),
+                            STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(member3, '$.purchase_date')), '%d/%m/%Y')
+                        ),
+                        INTERVAL (CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(member3, '$.product_name')) LIKE '%6%' THEN 6 ELSE 12 END) MONTH
+                    ),
+                    '9999-12-31'
+                ),
+                COALESCE(
+                    DATE_ADD(
+                        COALESCE(
+                            STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(member4, '$.purchase_date')), '%H:%i:%s %d/%m/%Y'),
+                            STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(member4, '$.purchase_date')), '%d/%m/%Y %H:%i:%s'),
+                            STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(member4, '$.purchase_date')), '%d/%m/%Y')
+                        ),
+                        INTERVAL (CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(member4, '$.product_name')) LIKE '%6%' THEN 6 ELSE 12 END) MONTH
+                    ),
+                    '9999-12-31'
+                ),
+                COALESCE(
+                    DATE_ADD(
+                        COALESCE(
+                            STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(member5, '$.purchase_date')), '%H:%i:%s %d/%m/%Y'),
+                            STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(member5, '$.purchase_date')), '%d/%m/%Y %H:%i:%s'),
+                            STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(member5, '$.purchase_date')), '%d/%m/%Y')
+                        ),
+                        INTERVAL (CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(member5, '$.product_name')) LIKE '%6%' THEN 6 ELSE 12 END) MONTH
+                    ),
+                    '9999-12-31'
+                )
+            ) AS family_empty_date
+            ,
+            (
+                (CASE WHEN member1 IS NOT NULL AND TRIM(member1) <> '' THEN 1 ELSE 0 END) +
+                (CASE WHEN member2 IS NOT NULL AND TRIM(member2) <> '' THEN 1 ELSE 0 END) +
+                (CASE WHEN member3 IS NOT NULL AND TRIM(member3) <> '' THEN 1 ELSE 0 END) +
+                (CASE WHEN member4 IS NOT NULL AND TRIM(member4) <> '' THEN 1 ELSE 0 END) +
+                (CASE WHEN member5 IS NOT NULL AND TRIM(member5) <> '' THEN 1 ELSE 0 END)
+            ) AS member_count
+            FROM family" . $whereSql . " ORDER BY " . $sortConfig['order'];
         if ($perPage > 0) {
             $offset = max(0, ($page - 1) * $perPage);
             $query .= " LIMIT " . (int) $perPage . " OFFSET " . (int) $offset;
@@ -77,7 +161,7 @@ class family
             }
         }
 
-        return ['items' => $results, 'total' => $total];
+        return ['items' => $results, 'total' => $total, 'sort' => $sortConfig['key']];
     }
 
     /**

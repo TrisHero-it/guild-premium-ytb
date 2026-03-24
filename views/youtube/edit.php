@@ -219,6 +219,10 @@
                                     $payDueDateValue = $oldData ? ($oldData['pay_due_date'] ?? '') : formatDateTimeForInput($family['pay_due_date'] ?? '');
                                     $statusValue = $oldData ? ($oldData['status'] ?? '') : ($family['status'] ?? '');
                                     $noteValue = $oldData ? ($oldData['note'] ?? '') : ($family['note'] ?? '');
+                                    $returnPage = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+                                    $returnOrderCode = isset($_GET['order_code']) ? trim((string)$_GET['order_code']) : '';
+                                    $returnListUrl = '/?page=' . $returnPage . ($returnOrderCode !== '' ? '&order_code=' . urlencode($returnOrderCode) : '');
+
                                     $billPaymentValue = $family['bill_payment'] ?? '';
                                     $billPaymentFiles = [];
                                     if (!empty($billPaymentValue)) {
@@ -235,6 +239,8 @@
                                     <form method="POST" action="/" id="edit_family_form" enctype="multipart/form-data" class="grid gap-5 lg:gap-7.5">
                                         <input type="hidden" name="action" value="update-family">
                                         <input type="hidden" name="id" value="<?php echo htmlspecialchars($family['id']); ?>">
+                                        <input type="hidden" name="page" value="<?php echo (int)$returnPage; ?>">
+                                        <input type="hidden" name="order_code" value="<?php echo htmlspecialchars($returnOrderCode); ?>">
                                         <!-- Row 1: Form Type and Email -->
                                         <div class="grid lg:grid-cols-2 gap-5" style="padding: 10px 10px 0 10px;">
                                             <div class="flex flex-col gap-2">
@@ -542,7 +548,7 @@
 
                                         <!-- Form Actions -->
                                         <div class="flex items-center justify-end gap-2.5 pt-5 border-t border-t-border" style="padding: 10px 10px;">
-                                            <a href="/" class="kt-btn kt-btn-outline">Hủy</a>
+                                            <a href="<?php echo htmlspecialchars($returnListUrl); ?>" class="kt-btn kt-btn-outline">Hủy</a>
                                             <button type="submit" class="kt-btn kt-btn-primary">
                                                 Cập nhật Family
                                             </button>

@@ -200,7 +200,10 @@
                                                                                         <h3 class="kt-card-title">
                                                                                                 Youtube families
                                                                                         </h3>
-                                                                                        <form method="get" action="?" class="flex items-center gap-2" id="search_form">
+                                                                                        <form method="get" action="?" class="flex items-center gap-2 flex-wrap" id="search_form">
+                                                                                                <?php if (!empty($_GET['act'])): ?>
+                                                                                                        <input type="hidden" name="act" value="<?php echo htmlspecialchars((string) $_GET['act']); ?>">
+                                                                                                <?php endif; ?>
                                                                                                 <div class="kt-input max-w-48">
                                                                                                         <i class="ki-filled ki-magnifier" id="search_icon"></i>
                                                                                                         <i class="ki-filled ki-loading-spinner animate-spin hidden" id="search_loading" style="animation: spin 1s linear infinite;"></i>
@@ -220,33 +223,25 @@
                                                                                                                 Đang tìm...
                                                                                                         </span>
                                                                                                 </button>
+                                                                                                <div class="kt-input max-w-64">
+                                                                                                        <i class="ki-filled ki-filter" style="margin-right: 8px;"></i>
+                                                                                                        <select name="sort" onchange="this.form.submit()">
+                                                                                                                <option value="next_payment" <?php echo (!isset($sort) || $sort === '' || $sort === 'next_payment') ? 'selected' : ''; ?>>
+                                                                                                                        Sắp xếp: Lần thanh toán tiếp theo (gần nhất)
+                                                                                                                </option>
+                                                                                                                <option value="family_empty" <?php echo (isset($sort) && $sort === 'family_empty') ? 'selected' : ''; ?>>
+                                                                                                                        Sắp xếp: Ngày family trống (gần nhất)
+                                                                                                                </option>
+                                                                                                                <option value="members_asc" <?php echo (isset($sort) && $sort === 'members_asc') ? 'selected' : ''; ?>>
+                                                                                                                        Sắp xếp: Số thành viên (ít → nhiều)
+                                                                                                                </option>
+                                                                                                        </select>
+                                                                                                </div>
+
                                                                                         </form>
                                                                                 </div>
                                                                                 <div class="kt-card-body p-5">
                                                                                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5" id="families_grid">
-                                                                                                <?php
-                                                                                                // Sắp xếp theo "lần thanh toán tiếp theo" (ngày gần nhất lên trước)
-                                                                                                if (isset($families) && is_array($families)) {
-                                                                                                        usort($families, function ($a, $b) {
-                                                                                                                $aBaseStr = !empty($a['pay_due_date']) ? $a['pay_due_date'] : (!empty($a['payment_at']) ? $a['payment_at'] : null);
-                                                                                                                $bBaseStr = !empty($b['pay_due_date']) ? $b['pay_due_date'] : (!empty($b['payment_at']) ? $b['payment_at'] : null);
-
-                                                                                                                $aBaseTs = $aBaseStr ? strtotime($aBaseStr) : PHP_INT_MAX;
-                                                                                                                $bBaseTs = $bBaseStr ? strtotime($bBaseStr) : PHP_INT_MAX;
-
-                                                                                                                $aDaysToAdd = (!empty($a['month_to_pay']) && (int)$a['month_to_pay'] > 0) ? (int)$a['month_to_pay'] * 30 : 30;
-                                                                                                                $bDaysToAdd = (!empty($b['month_to_pay']) && (int)$b['month_to_pay'] > 0) ? (int)$b['month_to_pay'] * 30 : 30;
-
-                                                                                                                $aNextTs = $aBaseTs === PHP_INT_MAX ? PHP_INT_MAX : ($aBaseTs + ($aDaysToAdd * 86400));
-                                                                                                                $bNextTs = $bBaseTs === PHP_INT_MAX ? PHP_INT_MAX : ($bBaseTs + ($bDaysToAdd * 86400));
-
-                                                                                                                if ($aNextTs === $bNextTs) {
-                                                                                                                        return ((int)($a['id'] ?? 0)) <=> ((int)($b['id'] ?? 0));
-                                                                                                                }
-                                                                                                                return $aNextTs <=> $bNextTs;
-                                                                                                        });
-                                                                                                }
-                                                                                                ?>
                                                                                                 <?php foreach ($families as $family): ?>
                                                                                                         <?php
                                                                                                         // Đếm số member đã điền (member 1 đến 5)
@@ -284,7 +279,7 @@
                                                                                                                                                 Thanh toán
                                                                                                                                         </button>
                                                                                                                                         <a class="kt-btn kt-btn-icon kt-btn-sm kt-btn-ghost"
-                                                                                                                                                href="?act=edit-family&id=<?php echo $family['id']; ?>"
+                                                                                                                                                href="?act=edit-family&id=<?php echo $family['id']; ?>&page=<?php echo (int)$page; ?><?php echo !empty($orderCode) ? '&order_code=' . urlencode($orderCode) : ''; ?>"
                                                                                                                                                 title="Sửa">
                                                                                                                                                 <i class="ki-filled ki-pencil text-primary">
                                                                                                                                                 </i>
@@ -319,8 +314,8 @@
                                                                                                                                         </div>
                                                                                                                                 </div>
                                                                                                                                 <div class="flex flex-col gap-1">
-                                                                                                                                        <span class="text-xs text-muted-foreground font-medium">Thanh toán cho chủ fam</span>
-                                                                                                                                        <span class="text-sm font-medium text-foreground"><?php echo date('d/m/Y', strtotime($family['pay_due_date'])); ?></span>
+                                                                                                                                        <span class="text-xs text-muted-foreground font-medium">Ngày thành toán gần nhất</span>
+                                                                                                                                        <span class="text-sm font-medium text-foreground"><?php echo date('d/m/Y', strtotime($family['payment_at'])); ?></span>
                                                                                                                                 </div>
                                                                                                                                 <?php if (!empty($family['afiilicate_by'])): ?>
                                                                                                                                         <div class="flex flex-col gap-1">
@@ -492,22 +487,62 @@
                                                                                         </div>
                                                                                         <?php
                                                                                         $totalPages = $perPage > 0 ? max(1, (int) ceil($totalFamilies / $perPage)) : 1;
-                                                                                        $orderCodeParam = isset($orderCode) && $orderCode !== '' ? '&order_code=' . urlencode($orderCode) : '';
+                                                                                        $page = max(1, min((int) $page, $totalPages));
+
+                                                                                        $query = $_GET ?? [];
+                                                                                        unset($query['page']);
+                                                                                        $baseQuery = http_build_query($query);
+                                                                                        $baseQuery = $baseQuery !== '' ? ($baseQuery . '&') : '';
+
+                                                                                        $buildHref = function (int $p) use ($baseQuery): string {
+                                                                                                return '?' . $baseQuery . 'page=' . $p;
+                                                                                        };
+
+                                                                                        $window = 2; // số trang hiển thị 2 bên trang hiện tại
+                                                                                        $startPage = max(1, $page - $window);
+                                                                                        $endPage = min($totalPages, $page + $window);
                                                                                         ?>
                                                                                         <?php if ($totalPages > 1): ?>
-                                                                                                <div class="flex items-center justify-between gap-4 mt-5 pt-4 border-t border-border">
+                                                                                                <div class="flex flex-wrap items-center justify-between gap-4 mt-5 pt-4 border-t border-border">
                                                                                                         <span class="text-sm text-muted-foreground">
-                                                                                                                Tổng <?php echo $totalFamilies; ?> family
+                                                                                                                Tổng <?php echo (int) $totalFamilies; ?> family
                                                                                                                 <?php if (!empty($orderCode)): ?> (tìm theo mã đơn hàng / email)<?php endif; ?>
                                                                                                         </span>
-                                                                                                        <div class="flex items-center gap-2">
-                                                                                                                <?php if ($page > 1): ?>
-                                                                                                                        <a class="kt-btn kt-btn-sm kt-btn-outline" href="?page=<?php echo $page - 1; ?><?php echo $orderCodeParam; ?>">Trang trước</a>
+                                                                                                        <div class="flex flex-wrap items-center gap-2">
+                                                                                                                <a class="kt-btn kt-btn-sm kt-btn-outline <?php echo $page <= 1 ? 'pointer-events-none opacity-50' : ''; ?>"
+                                                                                                                        href="<?php echo $buildHref(1); ?>">« Đầu</a>
+                                                                                                                <a class="kt-btn kt-btn-sm kt-btn-outline <?php echo $page <= 1 ? 'pointer-events-none opacity-50' : ''; ?>"
+                                                                                                                        href="<?php echo $buildHref(max(1, $page - 1)); ?>">Trang trước</a>
+
+                                                                                                                <?php if ($startPage > 1): ?>
+                                                                                                                        <a class="kt-btn kt-btn-sm kt-btn-outline" href="<?php echo $buildHref(1); ?>">1</a>
+                                                                                                                        <?php if ($startPage > 2): ?>
+                                                                                                                                <span class="px-2 text-sm text-muted-foreground select-none">…</span>
+                                                                                                                        <?php endif; ?>
                                                                                                                 <?php endif; ?>
-                                                                                                                <span class="text-sm text-foreground">Trang <?php echo $page; ?> / <?php echo $totalPages; ?></span>
-                                                                                                                <?php if ($page < $totalPages): ?>
-                                                                                                                        <a class="kt-btn kt-btn-sm kt-btn-outline" href="?page=<?php echo $page + 1; ?><?php echo $orderCodeParam; ?>">Trang sau</a>
+
+                                                                                                                <?php for ($p = $startPage; $p <= $endPage; $p++): ?>
+                                                                                                                        <?php if ($p === $page): ?>
+                                                                                                                                <span class="kt-btn kt-btn-sm kt-btn-primary pointer-events-none"><?php echo $p; ?></span>
+                                                                                                                        <?php else: ?>
+                                                                                                                                <a class="kt-btn kt-btn-sm kt-btn-outline" href="<?php echo $buildHref($p); ?>"><?php echo $p; ?></a>
+                                                                                                                        <?php endif; ?>
+                                                                                                                <?php endfor; ?>
+
+                                                                                                                <?php if ($endPage < $totalPages): ?>
+                                                                                                                        <?php if ($endPage < $totalPages - 1): ?>
+                                                                                                                                <span class="px-2 text-sm text-muted-foreground select-none">…</span>
+                                                                                                                        <?php endif; ?>
+                                                                                                                        <a class="kt-btn kt-btn-sm kt-btn-outline" href="<?php echo $buildHref($totalPages); ?>"><?php echo $totalPages; ?></a>
                                                                                                                 <?php endif; ?>
+
+                                                                                                                <span class="text-sm text-foreground px-1">
+                                                                                                                        Trang <?php echo (int) $page; ?> / <?php echo (int) $totalPages; ?>
+                                                                                                                </span>
+                                                                                                                <a class="kt-btn kt-btn-sm kt-btn-outline <?php echo $page >= $totalPages ? 'pointer-events-none opacity-50' : ''; ?>"
+                                                                                                                        href="<?php echo $buildHref(min($totalPages, $page + 1)); ?>">Trang sau</a>
+                                                                                                                <a class="kt-btn kt-btn-sm kt-btn-outline <?php echo $page >= $totalPages ? 'pointer-events-none opacity-50' : ''; ?>"
+                                                                                                                        href="<?php echo $buildHref($totalPages); ?>">Cuối »</a>
                                                                                                         </div>
                                                                                                 </div>
                                                                                         <?php endif; ?>
@@ -612,6 +647,8 @@
                         <form method="post" action="/" id="quick_pay_form" enctype="multipart/form-data">
                                 <input type="hidden" name="action" value="quick-pay-family">
                                 <input type="hidden" name="id" id="payment_family_id" value="">
+                                <input type="hidden" name="page" value="<?php echo (int)$page; ?>">
+                                <input type="hidden" name="order_code" value="<?php echo htmlspecialchars(isset($orderCode) ? $orderCode : ''); ?>">
                                 <div class="kt-modal-body grid gap-4 px-5 py-4">
                                         <p class="text-sm font-medium text-foreground" id="payment_family_name">—</p>
                                         <!-- Thông tin chuyển khoản -->
@@ -654,8 +691,15 @@
                                         </div>
                                         <div class="flex flex-col gap-2">
                                                 <label class="kt-form-label text-mono font-semibold text-sm">Bill đã chuyển khoản thành công</label>
-                                                <input type="file" name="bill_payment" id="payment_bill_file" class="kt-input text-sm" accept="image/*,.pdf">
-                                                <span class="text-xs text-muted-foreground">Tùy chọn: ảnh chụp màn hình hoặc file PDF</span>
+                                                <input type="hidden" name="bill_payment_paste" id="payment_bill_paste" value="">
+                                                <div id="payment_bill_editor" class="kt-input text-sm min-h-[120px] h-auto p-3 overflow-auto" contenteditable="true" role="textbox" aria-label="Paste bill thanh toán" style="white-space: normal;">
+                                                        <span class="text-muted-foreground">Dán ảnh bill vào đây (Ctrl+V)</span>
+                                                </div>
+                                                <div id="payment_bill_preview_actions" class="hidden items-center justify-between gap-2">
+                                                        <span class="text-xs text-muted-foreground">Đã nhận ảnh bill từ clipboard</span>
+                                                        <button type="button" class="kt-btn kt-btn-sm kt-btn-outline" id="payment_bill_clear">Xóa ảnh</button>
+                                                </div>
+                                                <span class="text-xs text-muted-foreground">Tùy chọn: copy ảnh bill rồi paste trực tiếp vào ô này</span>
                                         </div>
                                 </div>
                                 <div class="kt-modal-footer flex items-center justify-end gap-2.5 px-5 py-4 border-t border-t-border">
@@ -736,6 +780,43 @@
                         return num === '' ? 0 : parseInt(num, 10) || 0;
                 }
 
+                function setPaymentBillPlaceholder() {
+                        var editor = document.getElementById('payment_bill_editor');
+                        if (!editor) return;
+                        editor.innerHTML = '<span class="text-muted-foreground">Dán ảnh bill vào đây (Ctrl+V)</span>';
+                }
+
+                function resetPaymentBillEditor() {
+                        var hidden = document.getElementById('payment_bill_paste');
+                        var actions = document.getElementById('payment_bill_preview_actions');
+                        if (hidden) hidden.value = '';
+                        if (actions) {
+                                actions.classList.add('hidden');
+                                actions.classList.remove('flex');
+                        }
+                        setPaymentBillPlaceholder();
+                }
+
+                function setPaymentBillImage(dataUrl) {
+                        var editor = document.getElementById('payment_bill_editor');
+                        var hidden = document.getElementById('payment_bill_paste');
+                        var actions = document.getElementById('payment_bill_preview_actions');
+                        if (!editor || !hidden) return;
+                        hidden.value = dataUrl;
+                        editor.innerHTML = '';
+                        var img = document.createElement('img');
+                        img.src = dataUrl;
+                        img.alt = 'Bill thanh toán';
+                        img.className = 'block max-w-full rounded-lg border border-border bg-white';
+                        img.style.maxHeight = '260px';
+                        img.style.objectFit = 'contain';
+                        editor.appendChild(img);
+                        if (actions) {
+                                actions.classList.remove('hidden');
+                                actions.classList.add('flex');
+                        }
+                }
+
                 function openPaymentModal(familyId, familyName, numberBank, nameBank, monthlyPayment) {
                         document.getElementById('payment_family_id').value = familyId;
                         document.getElementById('payment_family_name').textContent = (familyName || '—');
@@ -743,8 +824,7 @@
                         document.getElementById('payment_bank_number').textContent = (numberBank || '—');
                         document.getElementById('payment_bank_name').textContent = (nameBank || '—');
                         document.getElementById('payment_month_select').value = '';
-                        var billFileEl = document.getElementById('payment_bill_file');
-                        if (billFileEl) billFileEl.value = '';
+                        resetPaymentBillEditor();
                         var monthlyEl = document.getElementById('payment_monthly_payment');
                         if (monthlyEl) {
                                 var raw = (monthlyPayment !== undefined && monthlyPayment !== null) ? String(monthlyPayment).replace(/\D/g, '') : '';
@@ -830,8 +910,21 @@
                                 idInput.name = 'id';
                                 idInput.value = id;
 
+                                const params = new URLSearchParams(window.location.search);
+                                const pageInput = document.createElement('input');
+                                pageInput.type = 'hidden';
+                                pageInput.name = 'page';
+                                pageInput.value = params.get('page') || '1';
+
+                                const orderCodeInput = document.createElement('input');
+                                orderCodeInput.type = 'hidden';
+                                orderCodeInput.name = 'order_code';
+                                orderCodeInput.value = params.get('order_code') || '';
+
                                 form.appendChild(actionInput);
                                 form.appendChild(idInput);
+                                form.appendChild(pageInput);
+                                form.appendChild(orderCodeInput);
                                 document.body.appendChild(form);
                                 form.submit();
                         }
@@ -945,6 +1038,46 @@
                                         }
                                 });
                         }
+                        var paymentBillEditor = document.getElementById('payment_bill_editor');
+                        var paymentBillClear = document.getElementById('payment_bill_clear');
+                        if (paymentBillEditor) {
+                                paymentBillEditor.addEventListener('focus', function() {
+                                        var hidden = document.getElementById('payment_bill_paste');
+                                        if (hidden && !hidden.value && paymentBillEditor.querySelector('.text-muted-foreground')) {
+                                                paymentBillEditor.innerHTML = '';
+                                        }
+                                });
+                                paymentBillEditor.addEventListener('blur', function() {
+                                        var hidden = document.getElementById('payment_bill_paste');
+                                        if (hidden && !hidden.value && paymentBillEditor.textContent.trim() === '') {
+                                                setPaymentBillPlaceholder();
+                                        }
+                                });
+                                paymentBillEditor.addEventListener('paste', function(e) {
+                                        var items = e.clipboardData && e.clipboardData.items ? e.clipboardData.items : [];
+                                        for (var i = 0; i < items.length; i++) {
+                                                if (items[i].type.indexOf('image/') === 0) {
+                                                        e.preventDefault();
+                                                        var file = items[i].getAsFile();
+                                                        if (!file) return;
+                                                        if (file.size > 10 * 1024 * 1024) {
+                                                                alert('Ảnh bill quá lớn. Kích thước tối đa là 10MB.');
+                                                                return;
+                                                        }
+                                                        var reader = new FileReader();
+                                                        reader.onload = function(event) {
+                                                                setPaymentBillImage(event.target.result);
+                                                        };
+                                                        reader.readAsDataURL(file);
+                                                        return;
+                                                }
+                                        }
+                                });
+                        }
+                        if (paymentBillClear) {
+                                paymentBillClear.addEventListener('click', resetPaymentBillEditor);
+                        }
+
                         // Trước khi submit form thanh toán: gửi số nguyên (bỏ dấu chấm)
                         var quickPayForm = document.getElementById('quick_pay_form');
                         if (quickPayForm) {

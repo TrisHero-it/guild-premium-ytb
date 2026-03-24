@@ -7,6 +7,52 @@ require_once __DIR__ . '/controller/CollaboratorsController.php';
 
 $act = isset($_GET['act']) ? $_GET['act'] : '';
 $sub = isset($_GET['sub']) ? $_GET['sub'] : '';
+$username = "admin";
+$password = "Muakey@@111";
+$publicActs = ['guide', 'huong-dan', 'login'];
+
+if ($act === 'logout') {
+        $_SESSION = [];
+        if (ini_get('session.use_cookies')) {
+                $params = session_get_cookie_params();
+                setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
+        }
+        session_destroy();
+        header('Location: /?act=login');
+        exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'login') {
+        $inputUser = trim($_POST['username'] ?? '');
+        $inputPass = $_POST['password'] ?? '';
+        if ($inputUser === $username && $inputPass === $password) {
+                $_SESSION['logged_in'] = true;
+                header('Location: /');
+                exit;
+        }
+        $_SESSION['login_error'] = 'Tài khoản hoặc mật khẩu không đúng';
+        header('Location: /?act=login');
+        exit;
+}
+
+$isLoggedIn = !empty($_SESSION['logged_in']);
+$isPublicRoute = in_array($act, $publicActs, true);
+
+if (!$isLoggedIn && !$isPublicRoute) {
+        header('Location: /?act=login');
+        exit;
+}
+
+if ($act === 'login') {
+        if ($isLoggedIn) {
+                header('Location: /');
+                exit;
+        }
+        $loginError = $_SESSION['login_error'] ?? null;
+        unset($_SESSION['login_error']);
+        include 'views/login/login.php';
+        exit;
+}
 
 // Xử lý POST request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -82,6 +128,7 @@ if ($act === 'collaborators') {
         // Default: Family management
         $familyController = new FamilyController();
         $orderCode = isset($_GET['order_code']) ? trim($_GET['order_code']) : '';
+        $sort = isset($_GET['sort']) ? trim((string) $_GET['sort']) : '';
         $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
         $perPage = 20;
 
@@ -96,11 +143,12 @@ if ($act === 'collaborators') {
                 }
                 include 'views/youtube/edit.php';
         } else {
-                $listResult = $familyController->getListWithSearch($orderCode, $page, $perPage);
+                $listResult = $familyController->getListWithSearch($orderCode, $page, $perPage, $sort);
                 $families = $listResult['items'];
                 $totalFamilies = $listResult['total'];
                 $page = $listResult['page'];
                 $perPage = $listResult['per_page'];
+                $sort = $listResult['sort'];
                 include 'views/youtube/index.php';
         }
 }
