@@ -224,29 +224,6 @@
                                                                                 </div>
                                                                                 <div class="kt-card-body p-5">
                                                                                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5" id="families_grid">
-                                                                                                <?php
-                                                                                                // Sắp xếp theo "lần thanh toán tiếp theo" (ngày gần nhất lên trước)
-                                                                                                if (isset($families) && is_array($families)) {
-                                                                                                        usort($families, function ($a, $b) {
-                                                                                                                $aBaseStr = !empty($a['pay_due_date']) ? $a['pay_due_date'] : (!empty($a['payment_at']) ? $a['payment_at'] : null);
-                                                                                                                $bBaseStr = !empty($b['pay_due_date']) ? $b['pay_due_date'] : (!empty($b['payment_at']) ? $b['payment_at'] : null);
-
-                                                                                                                $aBaseTs = $aBaseStr ? strtotime($aBaseStr) : PHP_INT_MAX;
-                                                                                                                $bBaseTs = $bBaseStr ? strtotime($bBaseStr) : PHP_INT_MAX;
-
-                                                                                                                $aDaysToAdd = (!empty($a['month_to_pay']) && (int)$a['month_to_pay'] > 0) ? (int)$a['month_to_pay'] * 30 : 30;
-                                                                                                                $bDaysToAdd = (!empty($b['month_to_pay']) && (int)$b['month_to_pay'] > 0) ? (int)$b['month_to_pay'] * 30 : 30;
-
-                                                                                                                $aNextTs = $aBaseTs === PHP_INT_MAX ? PHP_INT_MAX : ($aBaseTs + ($aDaysToAdd * 86400));
-                                                                                                                $bNextTs = $bBaseTs === PHP_INT_MAX ? PHP_INT_MAX : ($bBaseTs + ($bDaysToAdd * 86400));
-
-                                                                                                                if ($aNextTs === $bNextTs) {
-                                                                                                                        return ((int)($a['id'] ?? 0)) <=> ((int)($b['id'] ?? 0));
-                                                                                                                }
-                                                                                                                return $aNextTs <=> $bNextTs;
-                                                                                                        });
-                                                                                                }
-                                                                                                ?>
                                                                                                 <?php foreach ($families as $family): ?>
                                                                                                         <?php
                                                                                                         // Đếm số member đã điền (member 1 đến 5)
@@ -284,7 +261,7 @@
                                                                                                                                                 Thanh toán
                                                                                                                                         </button>
                                                                                                                                         <a class="kt-btn kt-btn-icon kt-btn-sm kt-btn-ghost"
-                                                                                                                                                href="?act=edit-family&id=<?php echo $family['id']; ?>"
+                                                                                                                                                href="?act=edit-family&id=<?php echo $family['id']; ?>&page=<?php echo (int)$page; ?><?php echo !empty($orderCode) ? '&order_code=' . urlencode($orderCode) : ''; ?>"
                                                                                                                                                 title="Sửa">
                                                                                                                                                 <i class="ki-filled ki-pencil text-primary">
                                                                                                                                                 </i>
@@ -612,6 +589,8 @@
                         <form method="post" action="/" id="quick_pay_form" enctype="multipart/form-data">
                                 <input type="hidden" name="action" value="quick-pay-family">
                                 <input type="hidden" name="id" id="payment_family_id" value="">
+                                <input type="hidden" name="page" value="<?php echo (int)$page; ?>">
+                                <input type="hidden" name="order_code" value="<?php echo htmlspecialchars(isset($orderCode) ? $orderCode : ''); ?>">
                                 <div class="kt-modal-body grid gap-4 px-5 py-4">
                                         <p class="text-sm font-medium text-foreground" id="payment_family_name">—</p>
                                         <!-- Thông tin chuyển khoản -->
@@ -830,8 +809,21 @@
                                 idInput.name = 'id';
                                 idInput.value = id;
 
+                                const params = new URLSearchParams(window.location.search);
+                                const pageInput = document.createElement('input');
+                                pageInput.type = 'hidden';
+                                pageInput.name = 'page';
+                                pageInput.value = params.get('page') || '1';
+
+                                const orderCodeInput = document.createElement('input');
+                                orderCodeInput.type = 'hidden';
+                                orderCodeInput.name = 'order_code';
+                                orderCodeInput.value = params.get('order_code') || '';
+
                                 form.appendChild(actionInput);
                                 form.appendChild(idInput);
+                                form.appendChild(pageInput);
+                                form.appendChild(orderCodeInput);
                                 document.body.appendChild(form);
                                 form.submit();
                         }

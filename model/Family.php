@@ -55,14 +55,22 @@ class family
         $total = (int) $stmtCount->fetchColumn();
 
         // Lấy danh sách có ORDER BY và LIMIT/OFFSET
-        // Sắp xếp: quá hạn (payment_at + 30 ngày < hiện tại) lên đầu, sau đó theo số ngày còn lại tăng dần
-        $query = "SELECT *, 
-            CASE 
-                WHEN DATE_ADD(payment_at, INTERVAL 30 DAY) < CURDATE() THEN 0 
-                ELSE 1 
-            END AS is_overdue,
-            DATEDIFF(DATE_ADD(payment_at, INTERVAL 30 DAY), CURDATE()) AS days_remaining
-            FROM family" . $whereSql . " ORDER BY is_overdue ASC, days_remaining ASC";
+        // Sắp xếp toàn cục theo "lần thanh toán tiếp theo" (gần nhất lên trước),
+        // sau đó ổn định theo id để tránh đổi thứ tự ngẫu nhiên giữa các trang.
+        $query = "SELECT *,
+            COALESCE(
+                DATE_ADD(
+                    COALESCE(pay_due_date, payment_at),
+                    INTERVAL (
+                        CASE
+                            WHEN month_to_pay IS NULL OR month_to_pay <= 0 THEN 30
+                            ELSE month_to_pay * 30
+                        END
+                    ) DAY
+                ),
+                '9999-12-31'
+            ) AS next_payment_date
+            FROM family" . $whereSql . " ORDER BY next_payment_date ASC, id ASC";
         if ($perPage > 0) {
             $offset = max(0, ($page - 1) * $perPage);
             $query .= " LIMIT " . (int) $perPage . " OFFSET " . (int) $offset;
