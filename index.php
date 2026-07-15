@@ -4,12 +4,27 @@ session_start();
 require_once __DIR__ . '/model/Family.php';
 require_once __DIR__ . '/controller/FamilyController.php';
 require_once __DIR__ . '/controller/CollaboratorsController.php';
+require_once __DIR__ . '/controller/HistoryFamilyController.php';
 
 $act = isset($_GET['act']) ? $_GET['act'] : '';
+
+if ($act === 'history-family') {
+        header('Content-Type: application/json; charset=utf-8');
+
+        $controller = new HistoryFamilyController();
+
+        echo json_encode(
+                $controller->getByFamilyId((int)($_GET['family_id'] ?? 0)),
+                JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        );
+        exit;
+}
+
+
 $sub = isset($_GET['sub']) ? $_GET['sub'] : '';
 $username = "admin";
 $password = "Muakey@@111";
-$publicActs = ['guide', 'huong-dan', 'login'];
+$publicActs = ['guide', 'huong-dan', 'login', 'history-family'];
 
 if ($act === 'logout') {
         $_SESSION = [];
@@ -63,6 +78,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 $controller = new FamilyController();
                                 $controller->add();
                                 break;
+                        case "add-history-family":
+                                require_once __DIR__ . '/controller/HistoryFamilyController.php';
+                                $controller = new HistoryFamilyController();
+                                $controller->addHistory($_GET['order_id'], $_GET['family_id'], $_GET['status'], $_GET['old_value'], $_GET['new_value'], $_GET['name_product'], $_GET['email']);
+                                break;
                         case 'delete-family':
                                 require_once __DIR__ . '/controller/FamilyController.php';
                                 $controller = new FamilyController();
@@ -70,6 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 break;
                         case 'update-family':
                                 require_once __DIR__ . '/controller/FamilyController.php';
+
                                 $controller = new FamilyController();
                                 $controller->update();
                                 break;

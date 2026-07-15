@@ -59,6 +59,20 @@
                 z-index: 9990;
         }
 
+        #member_detail_modal_backdrop,
+        #payment_modal_backdrop {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1;
+        }
+
+        #member_detail_modal .kt-modal-content,
+        #payment_modal .kt-modal-content {
+                position: relative;
+                z-index: 2;
+        }
+
         #payment_modal {
                 z-index: 9995;
         }
@@ -117,9 +131,57 @@
                 pointer-events: none;
                 opacity: 0.7;
         }
+
+        .page-loading-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 1035;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(255, 255, 255, 0.78);
+                backdrop-filter: blur(2px);
+        }
+
+        .page-loading-overlay.hidden {
+                display: none;
+        }
+
+        .page-loading-overlay__content {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+                padding: 24px 32px;
+                border-radius: 12px;
+                background: #fff;
+                box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+        }
+
+        .page-loading-overlay__spinner {
+                width: 40px;
+                height: 40px;
+                animation: spin 1s linear infinite;
+        }
+
+        .page-loading-overlay__text {
+                margin: 0;
+                font-size: 14px;
+                font-weight: 500;
+                color: #334155;
+        }
 </style>
 
 <body class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-sidebar-fixed kt-header-fixed" style="background: ghostwhite;">
+        <div id="page_loading_overlay" class="page-loading-overlay hidden" aria-hidden="true">
+                <div class="page-loading-overlay__content">
+                        <svg class="page-loading-overlay__spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="#3b82f6" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="#3b82f6" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <p class="page-loading-overlay__text" id="page_loading_text">Đang xử lý...</p>
+                </div>
+        </div>
         <script>
                 const defaultThemeMode = 'light'; // light|dark|system
                 let themeMode;
@@ -225,7 +287,7 @@
                                                                                                 </button>
                                                                                                 <div class="kt-input max-w-64">
                                                                                                         <i class="ki-filled ki-filter" style="margin-right: 8px;"></i>
-                                                                                                        <select name="sort" onchange="this.form.submit()">
+                                                                                                        <select name="sort" id="sort_select">
                                                                                                                 <option value="next_payment" <?php echo (!isset($sort) || $sort === '' || $sort === 'next_payment') ? 'selected' : ''; ?>>
                                                                                                                         Sắp xếp: Lần thanh toán tiếp theo (gần nhất)
                                                                                                                 </option>
@@ -414,9 +476,17 @@
                                                                                                                         <div class="border-t border-t-border pt-3">
                                                                                                                                 <div class="flex items-center justify-between gap-2">
                                                                                                                                         <span class="text-xs text-muted-foreground font-medium">Thành viên: <?php echo $filledSlots; ?></span>
-                                                                                                                                        <button type="button" class="card-toggle-members text-2sm text-primary font-medium hover:underline cursor-pointer">
-                                                                                                                                                Xem thêm
-                                                                                                                                        </button>
+
+                                                                                                                                        <div>
+                                                                                                                                                <button
+                                                                                                                                                        type="button"
+                                                                                                                                                        class="checkls text-2sm text-primary cursor-pointer"
+                                                                                                                                                        data-family-id="<?= $family['id'] ?>">
+                                                                                                                                                </button>
+                                                                                                                                                <button type="button" class="card-toggle-members text-2sm text-primary font-medium hover:underline cursor-pointer">
+                                                                                                                                                        Xem thêm
+                                                                                                                                                </button>
+                                                                                                                                        </div>
                                                                                                                                 </div>
                                                                                                                                 <div class="card-members-detail hidden flex flex-col gap-2 mt-2">
                                                                                                                                         <?php
@@ -563,7 +633,8 @@
                 <!-- End of Wrapper -->
         </div>
 
-        <div class="kt-modal" data-kt-modal="true" id="member_detail_modal">
+        <div class="kt-modal" data-kt-modal="true" id="member_detail_modal" style="display: none;">
+                <div class="kt-modal-backdrop" id="member_detail_modal_backdrop" style="display: none;"></div>
                 <div class="kt-modal-content max-w-[600px] top-[15%]">
                         <div class="kt-modal-header">
                                 <h3 class="kt-modal-title">
@@ -632,12 +703,45 @@
                         </div>
                 </div>
         </div>
+
+        <div class="kt-modal" data-kt-modal="true" id="history_modal" style="display:none">
+                <div class="kt-modal-backdrop" id="history_modal_backdrop" style="display:none"></div>
+                <div class="kt-modal-content max-w-[600px] top-[15%]">
+                        <div class="kt-modal-header">
+                                <h3 class="kt-modal-title">
+                                        Lịch sử gia đình
+                                </h3>
+                                <button class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost shrink-0"
+                                        data-kt-modal-dismiss="true" onclick="closeHistoryFamilyModal()">
+                                        <i class="ki-filled ki-cross">
+                                        </i>
+                                </button>
+                        </div>
+                        <div class="kt-modal-body grid gap-5 px-0">
+                                <div class="flex flex-col px-5 gap-4">
+                                        <div class="grid gap-4" id="listHis">
+                                                <div class="flex flex-col gap-2" id="">
+                                                        <label class="text-mono font-semibold text-sm text-secondary-foreground history-label" style="background-color: #b1e044; padding: 18px;">
+                                                                Đã sửa
+                                                        </label>
+                                                </div>
+                                        </div>
+
+                                </div>
+                        </div>
+                        <div class="kt-modal-footer flex items-center justify-end gap-2.5 px-5 py-4 border-t border-t-border">
+                                <button class="kt-btn kt-btn-outline" data-kt-modal-dismiss="true" onclick="closeHistoryFamilyModal()">
+                                        Đóng
+                                </button>
+                        </div>
+                </div>
+        </div>
         <!-- End of Member Detail Modal -->
 
         <!-- Modal thanh toán cho chủ farm -->
         <div class="kt-modal" id="payment_modal" style="display: none;">
-                <div class="kt-modal-backdrop" id="payment_modal_backdrop" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1040;"></div>
-                <div class="kt-modal-content max-w-[420px] top-[15%] relative z-[1050]" style="margin: 0 auto; z-index: 1050;">
+                <div class="kt-modal-backdrop" id="payment_modal_backdrop" style="display: none;"></div>
+                <div class="kt-modal-content max-w-[420px] top-[15%] relative z-[1050]" style="margin: 0 auto;">
                         <div class="kt-modal-header">
                                 <h3 class="kt-modal-title">Thanh toán cho chủ farm</h3>
                                 <button type="button" class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost shrink-0" onclick="closePaymentModal()">
@@ -780,6 +884,24 @@
                         return num === '' ? 0 : parseInt(num, 10) || 0;
                 }
 
+                function showPageOverlay(message) {
+                        var overlay = document.getElementById('page_loading_overlay');
+                        var text = document.getElementById('page_loading_text');
+                        if (text) text.textContent = message || 'Đang xử lý...';
+                        if (!overlay) return;
+                        overlay.classList.remove('hidden');
+                        overlay.setAttribute('aria-hidden', 'false');
+                        document.body.style.overflow = 'hidden';
+                }
+
+                function hidePageOverlay() {
+                        var overlay = document.getElementById('page_loading_overlay');
+                        if (!overlay) return;
+                        overlay.classList.add('hidden');
+                        overlay.setAttribute('aria-hidden', 'true');
+                        document.body.style.overflow = '';
+                }
+
                 function setPaymentBillPlaceholder() {
                         var editor = document.getElementById('payment_bill_editor');
                         if (!editor) return;
@@ -886,8 +1008,15 @@
 
                 function closePaymentModal() {
                         var modal = document.getElementById('payment_modal');
-                        modal.classList.remove('show');
-                        modal.style.display = 'none';
+                        var backdrop = document.getElementById('payment_modal_backdrop');
+                        if (modal) {
+                                modal.classList.remove('show');
+                                modal.style.display = 'none';
+                        }
+                        if (backdrop) {
+                                backdrop.style.display = 'none';
+                                backdrop.onclick = null;
+                        }
                         document.body.style.overflow = '';
                         document.body.classList.remove('kt-modal-open');
                 }
@@ -895,6 +1024,7 @@
                 // Function to delete family
                 function deleteFamily(id) {
                         if (confirm('Bạn có chắc chắn muốn xóa family này không?')) {
+                                showPageOverlay('Đang xóa family...');
                                 // Create form to submit delete request
                                 const form = document.createElement('form');
                                 form.method = 'POST';
@@ -932,9 +1062,6 @@
 
                 // Function to show member detail modal
                 function showMemberModal(memberData, memberIndex) {
-                        console.log('showMemberModal called', memberData, memberIndex);
-
-                        // Populate modal with member data
                         const orderCodeEl = document.getElementById('modal_order_code');
                         const productNameEl = document.getElementById('modal_product_name');
                         const emailEl = document.getElementById('modal_email');
@@ -947,10 +1074,10 @@
                         if (regionEl) regionEl.textContent = memberData.region || '-';
                         if (purchaseDateEl) purchaseDateEl.textContent = memberData.purchase_date || '-';
 
-                        // Update modal title
                         const modal = document.getElementById('member_detail_modal');
-                        if (!modal) {
-                                console.error('Modal not found');
+                        const backdrop = document.getElementById('member_detail_modal_backdrop');
+                        if (!modal || !backdrop) {
+                                hidePageOverlay();
                                 alert('Không tìm thấy modal');
                                 return;
                         }
@@ -960,46 +1087,80 @@
                                 modalTitle.textContent = 'Thông tin thành viên ' + memberIndex;
                         }
 
-                        // Method 1: Try using data-kt-modal-toggle
-                        const triggerBtn = document.createElement('button');
-                        triggerBtn.setAttribute('data-kt-modal-toggle', 'member_detail_modal');
-                        triggerBtn.style.position = 'fixed';
-                        triggerBtn.style.left = '-9999px';
-                        triggerBtn.style.opacity = '0';
-                        document.body.appendChild(triggerBtn);
-
-                        // Trigger click
-                        setTimeout(function() {
-                                triggerBtn.click();
-
-                                // Clean up after a delay
-                                setTimeout(function() {
-                                        if (document.body.contains(triggerBtn)) {
-                                                document.body.removeChild(triggerBtn);
-                                        }
-                                }, 500);
-                        }, 50);
-
-                        // Fallback: If framework doesn't work, show manually
-                        setTimeout(function() {
-                                if (!modal.classList.contains('show')) {
-                                        console.log('Using fallback method');
-                                        modal.style.display = 'block';
-                                        modal.classList.add('show');
-                                        document.body.style.overflow = 'hidden';
-
-                                        // Add backdrop
-                                        let backdrop = document.querySelector('.kt-modal-backdrop');
-                                        if (!backdrop) {
-                                                backdrop = document.createElement('div');
-                                                backdrop.className = 'kt-modal-backdrop';
-                                                backdrop.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1040;';
-                                                document.body.appendChild(backdrop);
-                                        }
-                                        backdrop.style.display = 'block';
-                                }
-                        }, 200);
+                        hidePageOverlay();
+                        backdrop.style.display = 'block';
+                        backdrop.onclick = closeMemberModal;
+                        modal.classList.add('show');
+                        modal.style.display = 'block';
+                        document.body.style.overflow = 'hidden';
+                        document.body.classList.add('kt-modal-open');
                 }
+
+
+                function showHistoryFamilyModal(familyId) {
+
+                        const modal = document.getElementById('history_modal');
+                        const backdrop = document.getElementById('history_modal_backdrop');
+                        const listHis = document.getElementById('listHis');
+                        if (!modal || !backdrop) {
+                                hidePageOverlay();
+                                alert('Không tìm thấy modal');
+                                return;
+                        }
+
+                        const modalTitle = modal.querySelector('.kt-modal-title');
+                        if (modalTitle) {
+                                modalTitle.textContent = 'Lịch sử gia đình';
+                        }
+
+                        fetch(`/?
+act=history-family&family_id=${familyId}`)
+                                .then(response => {
+                                        if (!response.ok) {
+                                                throw new Error(`HTTP ${response.status}`);
+                                        }
+                                        return response.json();
+                                })
+                                .then(data => {
+                                        console.log(data);
+                                        let html = '';
+                                        data.forEach(item => {
+                                                html += `<div class="flex flex-col gap-2" id="">
+                                                        <label class="text-mono font-semibold text-sm text-secondary-foreground history-label" style="`
+                                                if (item.status === 'add') {
+                                                        html += `background-color: #37e631;`;
+                                                } else if (item.status === 'delete') {
+                                                        html += `background-color: #a12020;`;
+                                                } else {
+                                                        html += `background-color: #ecf027;`;
+                                                }
+                                                html += ` padding: 18px;">
+                                                        `;
+                                                if (item.status == "delete") {
+                                                        html += `<span style="color: #ebecec;">Đơn hàng <strong>${item.order_id}</strong> có email <strong>${item.email}</strong> bị xoá vào <strong>${item.created_at}</strong></span>`;
+                                                } else if (item.status == "add") {
+                                                        html += `<span style="color: #944d0b;">Đơn hàng <strong>${item.order_id}</strong> có email <strong>${item.email}</strong> được thêm vào <strong>${item.created_at}</strong></span>`;
+                                                } else {
+                                                        html += `<span style="color: #944d0b;">Đơn hàng <strong>${item.order_id}</strong> có email <strong>${item.email}</strong> được chỉnh sửa vào <strong>${item.created_at}</strong></span>`;
+                                                }
+
+                                                html += `</label>
+                                                </div>`
+                                        })
+                                        listHis.innerHTML = html;
+                                })
+                                .catch(error => {
+                                        console.error(error);
+                                });
+
+                        backdrop.style.display = 'block';
+                        backdrop.onclick = closeHistoryFamilyModal;
+                        modal.classList.add('show');
+                        modal.style.display = 'block';
+                        document.body.style.overflow = 'hidden';
+                        document.body.classList.add('kt-modal-open');
+                }
+
 
                 // Initialize event listeners for member view buttons
                 document.addEventListener('DOMContentLoaded', function() {
@@ -1007,6 +1168,7 @@
                         const searchForm = document.getElementById('search_form');
                         if (searchForm) {
                                 searchForm.addEventListener('submit', function(e) {
+                                        showPageOverlay('Đang tìm kiếm...');
                                         // Add loading class to form
                                         searchForm.classList.add('loading');
 
@@ -1020,6 +1182,14 @@
                                         if (searchLoading) searchLoading.classList.remove('hidden');
                                         if (searchBtnText) searchBtnText.classList.add('hidden');
                                         if (searchBtnLoading) searchBtnLoading.classList.remove('hidden');
+                                });
+                        }
+
+                        const sortSelect = document.getElementById('sort_select');
+                        if (sortSelect && searchForm) {
+                                sortSelect.addEventListener('change', function() {
+                                        showPageOverlay('Đang sắp xếp...');
+                                        searchForm.submit();
                                 });
                         }
 
@@ -1082,10 +1252,24 @@
                         var quickPayForm = document.getElementById('quick_pay_form');
                         if (quickPayForm) {
                                 quickPayForm.addEventListener('submit', function() {
+                                        showPageOverlay('Đang xử lý thanh toán...');
                                         var el = document.getElementById('payment_monthly_payment');
                                         if (el) el.value = String(parseMoneyInput(el.value));
                                 });
                         }
+
+                        document.addEventListener("click", function(e) {
+                                const btn = e.target.closest(".checkls");
+
+                                if (!btn) return;
+                                const familyId = btn.dataset.familyId;
+
+
+                                console.log("Đã click family:", familyId);
+                                // showPageOverlay('Đang tải thông tin...');
+                                showHistoryFamilyModal(familyId);
+
+                        });
 
                         // Use event delegation for dynamically added buttons
                         document.addEventListener('click', function(e) {
@@ -1095,9 +1279,15 @@
                                         const btn = e.target.closest('.card-toggle-members');
                                         const card = btn.closest('.family-card');
                                         const detail = card ? card.querySelector('.card-members-detail') : null;
+                                        const checkBtn = btn.parentElement.querySelector('.checkls');
                                         if (detail) {
                                                 detail.classList.toggle('hidden');
                                                 btn.textContent = detail.classList.contains('hidden') ? 'Xem thêm' : 'Thu gọn';
+                                                if (!detail.classList.contains('hidden')) {
+                                                        checkBtn.innerHTML = "Xem lịch sử"
+                                                } else {
+                                                        checkBtn.innerHTML = ""
+                                                }
                                         }
                                         return;
                                 }
@@ -1112,17 +1302,19 @@
                                                         alert('Không tìm thấy dữ liệu member');
                                                         return;
                                                 }
+                                                showPageOverlay('Đang tải thông tin...');
                                                 const memberData = JSON.parse(memberDataStr);
                                                 const memberIndex = btn.getAttribute('data-member-index');
                                                 showMemberModal(memberData, memberIndex);
                                         } catch (e) {
+                                                hidePageOverlay();
                                                 console.error('Error parsing member data:', e);
                                                 alert('Có lỗi khi hiển thị thông tin member: ' + e.message);
                                         }
                                 }
 
                                 // Close modal when clicking backdrop
-                                if (e.target.classList.contains('kt-modal-backdrop')) {
+                                if (e.target.id === 'member_detail_modal_backdrop') {
                                         closeMemberModal();
                                 }
                         });
@@ -1143,18 +1335,32 @@
                 // Function to close member modal
                 function closeMemberModal() {
                         const modal = document.getElementById('member_detail_modal');
+                        const backdrop = document.getElementById('member_detail_modal_backdrop');
                         if (modal) {
                                 modal.classList.remove('show');
                                 modal.style.display = 'none';
-                                document.body.style.overflow = '';
-                                document.body.classList.remove('kt-modal-open');
-
-                                const backdrop = document.querySelector('.kt-modal-backdrop:not(#payment_modal_backdrop)');
-                                if (backdrop) {
-                                        backdrop.style.display = 'none';
-                                        backdrop.classList.remove('show');
-                                }
                         }
+                        if (backdrop) {
+                                backdrop.style.display = 'none';
+                                backdrop.onclick = null;
+                        }
+                        document.body.style.overflow = '';
+                        document.body.classList.remove('kt-modal-open');
+                }
+
+                function closeHistoryFamilyModal() {
+                        const modal = document.getElementById('history_modal');
+                        const backdrop = document.getElementById('history_modal_backdrop');
+                        if (modal) {
+                                modal.classList.remove('show');
+                                modal.style.display = 'none';
+                        }
+                        if (backdrop) {
+                                backdrop.style.display = 'none';
+                                backdrop.onclick = null;
+                        }
+                        document.body.style.overflow = '';
+                        document.body.classList.remove('kt-modal-open');
                 }
         </script>
         <!-- End of Scripts -->

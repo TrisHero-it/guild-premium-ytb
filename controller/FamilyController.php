@@ -1,7 +1,8 @@
 <?php
 
-require_once __DIR__ . "/../model/Family.php";
 require_once __DIR__ . "/../model/db.php";
+require_once __DIR__ . "/../model/Family.php";
+require_once __DIR__ . "/../model/History.php";
 
 class FamilyController
 {
@@ -10,7 +11,7 @@ class FamilyController
 
     public function __construct()
     {
-        $this->familyModel = new family();
+        $this->familyModel = new Family();
 
         // Thiết lập thư mục upload
         $this->uploadDir = __DIR__ . "/../uploads/bills/";
@@ -480,6 +481,47 @@ class FamilyController
             $_SESSION['errors'] = ["ID không hợp lệ"];
             header("Location: " . $redirectUrl);
             return;
+        }
+        $family = $this->getById($id);
+        $modelHistory = new History();
+        for ($i = 1; $i < 6; $i++) {
+            if ($family['member' . $i] == null && $_POST['member' . $i] != null) {
+                preg_match(
+                    '/Mã đơn hàng:\s*(.*?)\s*Tên sản phẩm:\s*(.*?)\s*Email:\s*(.*?)\s*Khu vực bạn sống:\s*(.*?)\s*Ngày mua:\s*(.*)$/u',
+                    $_POST['member' . $i],
+                    $matches
+                );
+
+                $newData = [
+                    'order_id' => $matches[1] ?? '',
+                    'product'  => $matches[2] ?? '',
+                    'email'    => $matches[3] ?? '',
+                    'region'   => $matches[4] ?? '',
+                    'date'     => $matches[5] ?? '',
+                ];
+                $modelHistory->add($newData['order_id'], $id, 'add', $newData['product'], $newData['email'], null, null);
+            } else if ($family['member' . $i] != null && $_POST['member' . $i] == null) {
+                $oldValue = json_decode($family['member' . $i]);
+                $modelHistory->add($oldValue->order_code, $id, 'delete', $oldValue->product_name, $oldValue->email, null, null);
+            } else if ($family['member' . $i] != null) {
+                $oldValue = json_decode($family['member' . $i]);
+                preg_match(
+                    '/Mã đơn hàng:\s*(.*?)\s*Tên sản phẩm:\s*(.*?)\s*Email:\s*(.*?)\s*Khu vực bạn sống:\s*(.*?)\s*Ngày mua:\s*(.*)$/u',
+                    $_POST['member' . $i],
+                    $matches
+                );
+                $newData = [
+                    'order_id' => $matches[1] ?? '',
+                    'product'  => $matches[2] ?? '',
+                    'email'    => $matches[3] ?? '',
+                    'region'   => $matches[4] ?? '',
+                    'date'     => $matches[5] ?? '',
+                ];
+                if ($oldValue->order_code != $newData['order_id'] || $oldValue->email != $newData['email']) {
+
+                    $modelHistory->add($oldValue->order_code, $id, 'change', $newData['product'], $newData['email'], json_encode($oldValue), $_POST['member' . $i]);
+                }
+            }
         }
 
         // Lấy dữ liệu từ form

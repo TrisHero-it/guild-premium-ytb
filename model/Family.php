@@ -1,7 +1,7 @@
 <?php
 
 require_once "db.php";
-class family
+class Family
 {
     function getAll()
     {
