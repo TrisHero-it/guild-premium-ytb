@@ -202,6 +202,47 @@ class Family
         return $result;
     }
 
+    /**
+     * Tìm family có email (chủ fam hoặc member1..5) trùng khớp.
+     * @param string $email Email cần kiểm tra
+     * @param int $excludeFamilyId Bỏ qua family này (khi sửa)
+     * @return array|null Thông tin family nếu tìm thấy
+     */
+    function findByMemberEmail($email, $excludeFamilyId = 0)
+    {
+        $email = strtolower(trim((string) $email));
+        if ($email === '') {
+            return null;
+        }
+
+        $db = new db();
+        $conn = $db->getConnect();
+
+        $query = "SELECT id, user, email FROM family WHERE (
+            LOWER(TRIM(email)) = :email
+            OR LOWER(TRIM(JSON_UNQUOTE(JSON_EXTRACT(member1, '$.email')))) = :email
+            OR LOWER(TRIM(JSON_UNQUOTE(JSON_EXTRACT(member2, '$.email')))) = :email
+            OR LOWER(TRIM(JSON_UNQUOTE(JSON_EXTRACT(member3, '$.email')))) = :email
+            OR LOWER(TRIM(JSON_UNQUOTE(JSON_EXTRACT(member4, '$.email')))) = :email
+            OR LOWER(TRIM(JSON_UNQUOTE(JSON_EXTRACT(member5, '$.email')))) = :email
+        )";
+
+        $params = [':email' => $email];
+
+        if ((int) $excludeFamilyId > 0) {
+            $query .= " AND id != :exclude_id";
+            $params[':exclude_id'] = (int) $excludeFamilyId;
+        }
+
+        $query .= " LIMIT 1";
+
+        $stmt = $conn->prepare($query);
+        $stmt->execute($params);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $result ?: null;
+    }
+
     function add($data)
     {
         $db = new db();

@@ -149,11 +149,22 @@ class FamilyController
             $errors[] = "Ngày đáo hạn không được để trống";
         }
 
+        // Kiểm tra email member trùng trong form và với các family khác
+        $memberEmailErrors = $this->validateMemberEmailsUniqueness([
+            1 => ['text' => $_POST['member1'] ?? null, 'json' => $_POST['member1_json'] ?? null],
+            2 => ['text' => $_POST['member2'] ?? null, 'json' => $_POST['member2_json'] ?? null],
+            3 => ['text' => $_POST['member3'] ?? null, 'json' => $_POST['member3_json'] ?? null],
+            4 => ['text' => $_POST['member4'] ?? null, 'json' => $_POST['member4_json'] ?? null],
+            5 => ['text' => $_POST['member5'] ?? null, 'json' => $_POST['member5_json'] ?? null],
+        ]);
+        $errors = array_merge($errors, $memberEmailErrors);
+
         // Nếu có lỗi, quay lại form với thông báo
         if (!empty($errors)) {
             $_SESSION['errors'] = $errors;
             $_SESSION['old_data'] = $_POST;
             header("Location: /?act=add-family");
+            exit;
         }
 
         // Thêm vào database
@@ -209,6 +220,78 @@ class FamilyController
 
         // Nếu không có JSON hoặc JSON không hợp lệ, lưu text gốc
         return !empty($textData) ? trim($textData) : null;
+    }
+
+    /**
+     * Trích xuất email từ dữ liệu member (JSON hoặc text key:value).
+     */
+    private function extractEmailFromMember($textData, $jsonData)
+    {
+        if (!empty($jsonData)) {
+            $decoded = json_decode($jsonData, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded) && !empty($decoded['email'])) {
+                return strtolower(trim((string) $decoded['email']));
+            }
+        }
+
+        if (empty($textData)) {
+            return null;
+        }
+
+        $text = trim((string) $textData);
+        if ($text === '') {
+            return null;
+        }
+
+        if ($text[0] === '{') {
+            $decoded = json_decode($text, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded) && !empty($decoded['email'])) {
+                return strtolower(trim((string) $decoded['email']));
+            }
+        }
+
+        if (preg_match('/Email:\s*(.+?)(?:\s*(?:Khu vực bạn sống|Ngày mua)|$)/ui', $text, $matches)) {
+            return strtolower(trim($matches[1]));
+        }
+
+        if (preg_match('/"email"\s*:\s*"([^"]+)"/i', $text, $matches)) {
+            return strtolower(trim($matches[1]));
+        }
+
+        return null;
+    }
+
+    /**
+     * Kiểm tra email member không trùng trong form và không tồn tại ở family khác.
+     * @param array $members [slot => ['text' => ..., 'json' => ...]]
+     * @param int $excludeFamilyId Bỏ qua family hiện tại khi sửa
+     * @return array Danh sách lỗi
+     */
+    private function validateMemberEmailsUniqueness(array $members, $excludeFamilyId = 0)
+    {
+        $errors = [];
+        $seenEmails = [];
+
+        foreach ($members as $slot => $data) {
+            $email = $this->extractEmailFromMember($data['text'] ?? null, $data['json'] ?? null);
+            if ($email === null || $email === '') {
+                continue;
+            }
+
+            if (isset($seenEmails[$email])) {
+                $errors[] = "Email {$email} bị trùng giữa Member {$seenEmails[$email]} và Member {$slot}";
+                continue;
+            }
+            $seenEmails[$email] = $slot;
+
+            $existingFamily = $this->familyModel->findByMemberEmail($email, $excludeFamilyId);
+            if ($existingFamily) {
+                $familyLabel = '#' . $existingFamily['id'] . ' (' . ($existingFamily['user'] ?? '') . ')';
+                $errors[] = "Email {$email} (Member {$slot}) đã tồn tại ở family {$familyLabel}";
+            }
+        }
+
+        return $errors;
     }
 
     private function handleFileUpload($file)
@@ -673,6 +756,15 @@ class FamilyController
         if (empty($pay_due_date)) {
             $errors[] = "Ngày đáo hạn không được để trống";
         }
+
+        $memberEmailErrors = $this->validateMemberEmailsUniqueness([
+            1 => ['text' => $_POST['member1'] ?? null, 'json' => $_POST['member1_json'] ?? null],
+            2 => ['text' => $_POST['member2'] ?? null, 'json' => $_POST['member2_json'] ?? null],
+            3 => ['text' => $_POST['member3'] ?? null, 'json' => $_POST['member3_json'] ?? null],
+            4 => ['text' => $_POST['member4'] ?? null, 'json' => $_POST['member4_json'] ?? null],
+            5 => ['text' => $_POST['member5'] ?? null, 'json' => $_POST['member5_json'] ?? null],
+        ], $id);
+        $errors = array_merge($errors, $memberEmailErrors);
 
         // Nếu có lỗi, quay lại form với thông báo
         if (!empty($errors)) {

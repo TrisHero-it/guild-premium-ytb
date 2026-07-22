@@ -2128,26 +2128,81 @@
             // Parse member data before form submit
             const form = document.getElementById('add_family_form');
             if (form) {
-                form.addEventListener('submit', function(e) {
-                    // Parse member data to JSON
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+
                     const memberFields = ['member1', 'member2', 'member3', 'member4', 'member5'];
+                    const emailsToCheck = [];
+                    const seenEmails = new Set();
+                    const duplicateMessages = [];
+
                     memberFields.forEach(function(fieldName) {
                         const textarea = form.querySelector('[name="' + fieldName + '"]');
-                        if (textarea && textarea.value.trim()) {
-                            const parsedData = parseMemberData(textarea.value);
-                            if (parsedData) {
-                                // Create hidden input with JSON data
-                                let hiddenInput = form.querySelector('[name="' + fieldName + '_json"]');
-                                if (!hiddenInput) {
-                                    hiddenInput = document.createElement('input');
-                                    hiddenInput.type = 'hidden';
-                                    hiddenInput.name = fieldName + '_json';
-                                    form.appendChild(hiddenInput);
-                                }
-                                hiddenInput.value = JSON.stringify(parsedData);
-                            }
+                        if (!textarea || !textarea.value.trim()) {
+                            return;
                         }
+
+                        const parsedData = parseMemberData(textarea.value);
+                        if (!parsedData) {
+                            return;
+                        }
+
+                        let hiddenInput = form.querySelector('[name="' + fieldName + '_json"]');
+                        if (!hiddenInput) {
+                            hiddenInput = document.createElement('input');
+                            hiddenInput.type = 'hidden';
+                            hiddenInput.name = fieldName + '_json';
+                            form.appendChild(hiddenInput);
+                        }
+                        hiddenInput.value = JSON.stringify(parsedData);
+
+                        const email = (parsedData.email || '').trim().toLowerCase();
+                        if (!email) {
+                            return;
+                        }
+
+                        const slot = fieldName.replace('member', '');
+                        if (seenEmails.has(email)) {
+                            duplicateMessages.push('Email ' + parsedData.email + ' bị trùng trong form (Member ' + slot + ')');
+                            return;
+                        }
+                        seenEmails.add(email);
+                        emailsToCheck.push({
+                            email: email,
+                            displayEmail: parsedData.email,
+                            slot: slot
+                        });
                     });
+
+                    if (duplicateMessages.length > 0) {
+                        alert(duplicateMessages.join('\n'));
+                        return;
+                    }
+
+                    for (const item of emailsToCheck) {
+                        try {
+                            const resp = await fetch('/?act=check-member-email&email=' + encodeURIComponent(item.email));
+                            if (!resp.ok) {
+                                continue;
+                            }
+                            const data = await resp.json();
+                            if (data.exists && data.family) {
+                                duplicateMessages.push(
+                                    'Email ' + item.displayEmail + ' (Member ' + item.slot + ') đã tồn tại ở family #' +
+                                    data.family.id + ' (' + (data.family.user || data.family.email || '') + ')'
+                                );
+                            }
+                        } catch (err) {
+                            console.error('Không kiểm tra được email member:', err);
+                        }
+                    }
+
+                    if (duplicateMessages.length > 0) {
+                        alert(duplicateMessages.join('\n'));
+                        return;
+                    }
+
+                    form.submit();
                 });
             }
         });

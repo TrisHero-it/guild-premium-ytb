@@ -58,6 +58,26 @@ if (!$isLoggedIn && !$isPublicRoute) {
         exit;
 }
 
+if ($act === 'check-member-email') {
+        header('Content-Type: application/json; charset=utf-8');
+
+        $email = trim((string) ($_GET['email'] ?? $_POST['email'] ?? ''));
+        $excludeId = (int) ($_GET['exclude_id'] ?? $_POST['exclude_id'] ?? 0);
+
+        $familyModel = new Family();
+        $found = $familyModel->findByMemberEmail($email, $excludeId);
+
+        echo json_encode([
+                'exists' => $found !== null,
+                'family' => $found ? [
+                        'id' => (int) $found['id'],
+                        'user' => $found['user'] ?? '',
+                        'email' => $found['email'] ?? '',
+                ] : null,
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        exit;
+}
+
 if ($act === 'login') {
         if ($isLoggedIn) {
                 header('Location: /');
